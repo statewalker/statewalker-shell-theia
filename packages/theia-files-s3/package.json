@@ -23,7 +23,7 @@
     "@aws-sdk/client-s3": "catalog:",
     "@statewalker/webrun-files": "catalog:",
     "@statewalker/webrun-files-s3": "catalog:",
-    "@theia-shell/theia-files-mounts": "workspace:*",
+    "@theia-shell/theia-files-mounts": "workspace:^",
     "@theia/core": "catalog:"
   }
 }

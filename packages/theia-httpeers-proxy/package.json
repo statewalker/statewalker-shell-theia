@@ -22,7 +22,7 @@
     "@statewalker/httpeers-core": "catalog:",
     "@statewalker/httpeers-join": "catalog:",
     "@statewalker/webrun-http-proxy": "catalog:",
-    "@theia-shell/theia-httpeers": "workspace:*",
+    "@theia-shell/theia-httpeers": "workspace:^",
     "@theia/core": "catalog:",
     "hono": "catalog:"
   }

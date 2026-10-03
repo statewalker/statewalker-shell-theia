@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "@statewalker/webrun-files-mem": "catalog:",
-    "@theia-shell/theia-files-api": "workspace:*",
+    "@theia-shell/theia-files-api": "workspace:^",
     "@theia/core": "catalog:"
   }
 }

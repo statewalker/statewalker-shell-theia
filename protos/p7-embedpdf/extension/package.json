@@ -10,8 +10,8 @@
   ],
   "dependencies": {
     "@statewalker/webrun-files-mem": "catalog:",
-    "@theia-shell/theia-files-api": "workspace:*",
-    "@theia-shell/theia-pdf-viewer": "workspace:*",
+    "@theia-shell/theia-files-api": "workspace:^",
+    "@theia-shell/theia-pdf-viewer": "workspace:^",
     "@theia/core": "catalog:"
   }
 }

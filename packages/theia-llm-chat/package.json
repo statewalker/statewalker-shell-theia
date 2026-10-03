@@ -19,8 +19,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@theia-shell/theia-httpeers": "workspace:*",
-    "@theia-shell/theia-markdown": "workspace:*",
+    "@theia-shell/theia-httpeers": "workspace:^",
+    "@theia-shell/theia-markdown": "workspace:^",
     "@theia/core": "catalog:"
   },
   "devDependencies": {

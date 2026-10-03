@@ -20,7 +20,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@theia-shell/theia-shadcn": "workspace:*",
+    "@theia-shell/theia-shadcn": "workspace:^",
     "@theia/core": "catalog:",
     "@theia/editor": "catalog:",
     "@theia/filesystem": "catalog:",

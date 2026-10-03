@@ -18,9 +18,9 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@theia-shell/p7-extension": "workspace:*",
-    "@theia-shell/theia-files-api": "workspace:*",
-    "@theia-shell/theia-pdf-viewer": "workspace:*",
+    "@theia-shell/p7-extension": "workspace:^",
+    "@theia-shell/theia-files-api": "workspace:^",
+    "@theia-shell/theia-pdf-viewer": "workspace:^",
     "@theia/core": "catalog:",
     "@theia/editor": "catalog:",
     "@theia/filesystem": "catalog:",

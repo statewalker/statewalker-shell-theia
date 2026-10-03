@@ -19,7 +19,7 @@
   "devDependencies": {
     "@tailwindcss/cli": "catalog:",
     "@tailwindcss/typography": "catalog:",
-    "@theia-shell/theia-shadcn": "workspace:*",
+    "@theia-shell/theia-shadcn": "workspace:^",
     "tailwindcss": "catalog:"
   }
 }
