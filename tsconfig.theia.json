@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "noUncheckedSideEffectImports": false,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "strict": true,
     "experimentalDecorators": true,
