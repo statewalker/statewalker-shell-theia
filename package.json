@@ -10,10 +10,10 @@
     "test:e2e": "pnpm -r run test:e2e"
   },
   "devDependencies": {
-    "@playwright/test": "1.56.1",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.7",
-    "typescript": "5.9.3",
-    "vitest": "4.1.11"
+    "@playwright/test": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

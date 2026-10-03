@@ -19,11 +19,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@statewalker/httpeers-core": "link:../../../../../httpeers/packages/httpeers-core",
-    "@statewalker/httpeers-join": "link:../../../../../httpeers/packages/httpeers-join",
-    "@statewalker/webrun-http-proxy": "0.2.0",
+    "@statewalker/httpeers-core": "catalog:",
+    "@statewalker/httpeers-join": "catalog:",
+    "@statewalker/webrun-http-proxy": "catalog:",
     "@theia-shell/theia-httpeers": "workspace:*",
-    "@theia/core": "1.76.0",
-    "hono": "4.13.9"
+    "@theia/core": "catalog:",
+    "hono": "catalog:"
   }
 }

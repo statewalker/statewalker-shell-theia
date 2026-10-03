@@ -20,7 +20,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@theia/core": "1.76.0",
-    "@theia/filesystem": "1.76.0"
+    "@theia/core": "catalog:",
+    "@theia/filesystem": "catalog:"
   }
 }

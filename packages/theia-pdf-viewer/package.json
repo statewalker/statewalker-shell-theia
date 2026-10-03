@@ -20,8 +20,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@embedpdf/snippet": "2.15.1",
-    "@theia/core": "1.76.0",
-    "@theia/filesystem": "1.76.0"
+    "@embedpdf/snippet": "catalog:",
+    "@theia/core": "catalog:",
+    "@theia/filesystem": "catalog:"
   }
 }

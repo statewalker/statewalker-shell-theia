@@ -12,7 +12,7 @@
     "build": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@theia/core": "1.76.0",
-    "@theia/plugin-ext": "1.76.0"
+    "@theia/core": "catalog:",
+    "@theia/plugin-ext": "catalog:"
   }
 }

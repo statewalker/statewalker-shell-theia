@@ -21,12 +21,12 @@
   },
   "dependencies": {
     "@theia-shell/theia-shadcn": "workspace:*",
-    "@theia/core": "1.76.0",
-    "@theia/editor": "1.76.0",
-    "@theia/filesystem": "1.76.0",
-    "@theia/monaco": "1.76.0",
-    "@theia/monaco-editor-core": "1.108.201",
-    "@theia/navigator": "1.76.0",
-    "@theia/workspace": "1.76.0"
+    "@theia/core": "catalog:",
+    "@theia/editor": "catalog:",
+    "@theia/filesystem": "catalog:",
+    "@theia/monaco": "catalog:",
+    "@theia/monaco-editor-core": "catalog:",
+    "@theia/navigator": "catalog:",
+    "@theia/workspace": "catalog:"
   }
 }

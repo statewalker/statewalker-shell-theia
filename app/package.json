@@ -35,18 +35,18 @@
     "@theia-shell/theia-pdf-viewer": "workspace:*",
     "@theia-shell/theia-secret-vault": "workspace:*",
     "@theia-shell/theia-shadcn": "workspace:*",
-    "@theia/core": "1.76.0",
-    "@theia/editor": "1.76.0",
-    "@theia/file-search": "1.76.0",
-    "@theia/filesystem": "1.76.0",
-    "@theia/messages": "1.76.0",
-    "@theia/monaco": "1.76.0",
-    "@theia/navigator": "1.76.0",
-    "@theia/preferences": "1.76.0",
-    "@theia/search-in-workspace": "1.76.0",
-    "@theia/workspace": "1.76.0"
+    "@theia/core": "catalog:",
+    "@theia/editor": "catalog:",
+    "@theia/file-search": "catalog:",
+    "@theia/filesystem": "catalog:",
+    "@theia/messages": "catalog:",
+    "@theia/monaco": "catalog:",
+    "@theia/navigator": "catalog:",
+    "@theia/preferences": "catalog:",
+    "@theia/search-in-workspace": "catalog:",
+    "@theia/workspace": "catalog:"
   },
   "devDependencies": {
-    "@theia/cli": "1.76.0"
+    "@theia/cli": "catalog:"
   }
 }

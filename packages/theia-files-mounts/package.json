@@ -20,17 +20,17 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@statewalker/webrun-files": "0.10.0",
-    "@statewalker/webrun-files-browser": "0.10.0",
-    "@statewalker/webrun-files-composite": "0.10.0",
-    "@statewalker/webrun-files-mem": "0.10.0",
+    "@statewalker/webrun-files": "catalog:",
+    "@statewalker/webrun-files-browser": "catalog:",
+    "@statewalker/webrun-files-composite": "catalog:",
+    "@statewalker/webrun-files-mem": "catalog:",
     "@theia-shell/theia-files-api": "workspace:*",
     "@theia-shell/theia-secret-vault": "workspace:*",
-    "@theia/core": "1.76.0",
-    "@theia/filesystem": "1.76.0",
-    "@theia/navigator": "1.76.0",
-    "@theia/userstorage": "1.76.0",
-    "@theia/workspace": "1.76.0",
-    "jsonc-parser": "3.3.1"
+    "@theia/core": "catalog:",
+    "@theia/filesystem": "catalog:",
+    "@theia/navigator": "catalog:",
+    "@theia/userstorage": "catalog:",
+    "@theia/workspace": "catalog:",
+    "jsonc-parser": "catalog:"
   }
 }

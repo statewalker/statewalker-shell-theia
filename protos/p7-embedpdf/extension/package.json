@@ -9,9 +9,9 @@
     }
   ],
   "dependencies": {
-    "@statewalker/webrun-files-mem": "0.10.0",
+    "@statewalker/webrun-files-mem": "catalog:",
     "@theia-shell/theia-files-api": "workspace:*",
     "@theia-shell/theia-pdf-viewer": "workspace:*",
-    "@theia/core": "1.76.0"
+    "@theia/core": "catalog:"
   }
 }

@@ -21,9 +21,9 @@
   "dependencies": {
     "@theia-shell/theia-httpeers": "workspace:*",
     "@theia-shell/theia-markdown": "workspace:*",
-    "@theia/core": "1.76.0"
+    "@theia/core": "catalog:"
   },
   "devDependencies": {
-    "fake-indexeddb": "6.2.5"
+    "fake-indexeddb": "catalog:"
   }
 }

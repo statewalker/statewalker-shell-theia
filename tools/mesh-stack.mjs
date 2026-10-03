@@ -27,7 +27,7 @@ import { join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
-export const HTTPEERS_DIR = resolve(process.env.HTTPEERS_DIR ?? join(here, "../../../../httpeers"));
+export const HTTPEERS_DIR = resolve(process.env.HTTPEERS_DIR ?? join(here, "../../httpeers"));
 
 const DOOR_SECRET = "theia-shell-e2e-door-secret-0123456789";
 const MASTER_KEY = "sk-fake-master";

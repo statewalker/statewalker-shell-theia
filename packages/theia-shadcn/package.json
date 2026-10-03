@@ -20,14 +20,14 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@radix-ui/react-separator": "1.1.15",
-    "@radix-ui/react-slot": "1.3.3",
-    "@theia/core": "1.76.0",
-    "class-variance-authority": "0.7.1",
-    "clsx": "2.1.1",
-    "tailwind-merge": "3.7.0"
+    "@radix-ui/react-separator": "catalog:",
+    "@radix-ui/react-slot": "catalog:",
+    "@theia/core": "catalog:",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "tailwind-merge": "catalog:"
   },
   "devDependencies": {
-    "react-dom": "19.3.0"
+    "react-dom": "catalog:"
   }
 }

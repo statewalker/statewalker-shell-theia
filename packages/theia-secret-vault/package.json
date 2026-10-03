@@ -20,8 +20,8 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@statewalker/webrun-files": "0.10.0",
-    "@statewalker/webrun-files-mem": "0.10.0",
-    "@theia/core": "1.76.0"
+    "@statewalker/webrun-files": "catalog:",
+    "@statewalker/webrun-files-mem": "catalog:",
+    "@theia/core": "catalog:"
   }
 }

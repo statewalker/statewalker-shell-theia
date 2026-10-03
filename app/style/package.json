@@ -14,12 +14,12 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@theia/core": "1.76.0"
+    "@theia/core": "catalog:"
   },
   "devDependencies": {
-    "@tailwindcss/cli": "4.3.3",
-    "@tailwindcss/typography": "0.5.20",
+    "@tailwindcss/cli": "catalog:",
+    "@tailwindcss/typography": "catalog:",
     "@theia-shell/theia-shadcn": "workspace:*",
-    "tailwindcss": "4.3.3"
+    "tailwindcss": "catalog:"
   }
 }

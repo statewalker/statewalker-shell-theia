@@ -2,7 +2,7 @@
   "name": "@theia-shell/theia-httpeers",
   "version": "0.0.0",
   "private": true,
-  "description": "Theia extension: this browser as an httpeers mesh member \u2014 join, peers, invitations, and a contribution point for mounts other extensions serve on the mesh.",
+  "description": "Theia extension: this browser as an httpeers mesh member — join, peers, invitations, and a contribution point for mounts other extensions serve on the mesh.",
   "main": "lib/common/index.js",
   "types": "lib/common/index.d.ts",
   "files": [
@@ -19,10 +19,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@statewalker/httpeers-access": "link:../../../../../httpeers/packages/httpeers-access",
-    "@statewalker/httpeers-core": "link:../../../../../httpeers/packages/httpeers-core",
-    "@statewalker/httpeers-join": "link:../../../../../httpeers/packages/httpeers-join",
-    "@statewalker/httpeers-member": "link:../../../../../httpeers/packages/httpeers-member",
-    "@theia/core": "1.76.0"
+    "@statewalker/httpeers-access": "catalog:",
+    "@statewalker/httpeers-core": "catalog:",
+    "@statewalker/httpeers-join": "catalog:",
+    "@statewalker/httpeers-member": "catalog:",
+    "@theia/core": "catalog:"
   }
 }
