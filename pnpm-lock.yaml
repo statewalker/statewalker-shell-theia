@@ -2344,8 +2344,8 @@ packages:
   '@statewalker/webrun-rpc@0.4.2':
     resolution: {integrity: sha512-XR5oukg2U+WA/DIHuaJNVnzTqm9UjK1Q1TyPL0VV3A51bnns1MHZnD3AmlcIxuh5/c0U8ANWP8A/OBVfXrPXlg==}
 
-  '@statewalker/webrun-streams-libp2p@0.1.4':
-    resolution: {integrity: sha512-Kqir4S9AZfoe6AL0p/gXVFPs1z+DYavitCI1MfHgsbeJsYX5VFwb/s2YwM/f+jnR9MEsXjzWrGrDhcIgHf9Kdg==}
+  '@statewalker/webrun-streams-libp2p@0.1.6':
+    resolution: {integrity: sha512-frb6EiCYrktujnlzPYGweToUuxh5keNrwS8hJcXj4M4CD40zd8OnNH76yDKBiOrJqHitywWoklsb+uHvjHknhQ==}
     peerDependencies:
       '@libp2p/interface': ^3.0.0
       '@multiformats/multiaddr': ^13.0.0
@@ -8413,7 +8413,7 @@ snapshots:
       '@statewalker/httpeers-core': 0.1.2
       '@statewalker/webrun-http-streams': 0.2.4
       '@statewalker/webrun-streams': 0.2.1
-      '@statewalker/webrun-streams-libp2p': 0.1.4(@libp2p/interface@3.3.0)(@multiformats/multiaddr@13.0.3)(libp2p@3.3.11)
+      '@statewalker/webrun-streams-libp2p': 0.1.6(@libp2p/interface@3.3.0)(@multiformats/multiaddr@13.0.3)(libp2p@3.3.11)
       libp2p: 3.3.11
     transitivePeerDependencies:
       - bufferutil
@@ -8495,7 +8495,7 @@ snapshots:
     dependencies:
       '@statewalker/webrun-streams': 0.2.1
 
-  '@statewalker/webrun-streams-libp2p@0.1.4(@libp2p/interface@3.3.0)(@multiformats/multiaddr@13.0.3)(libp2p@3.3.11)':
+  '@statewalker/webrun-streams-libp2p@0.1.6(@libp2p/interface@3.3.0)(@multiformats/multiaddr@13.0.3)(libp2p@3.3.11)':
     dependencies:
       '@libp2p/interface': 3.3.0
       '@multiformats/multiaddr': 13.0.3
