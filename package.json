@@ -3,6 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "description": "A browser-only Eclipse Theia shell over a FilesApi: prototypes, extensions and the app.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/statewalker/statewalker-shell-theia.git"
+  },
+  "bugs": {
+    "url": "https://github.com/statewalker/statewalker-shell-theia/issues"
+  },
+  "homepage": "https://github.com/statewalker/statewalker-shell-theia#readme",
   "packageManager": "pnpm@10.16.1",
   "scripts": {
     "build": "pnpm -r run build",
@@ -11,7 +19,8 @@
     "lint": "biome check --write .",
     "lint:check": "biome check .",
     "format": "biome format --write .",
-    "format:check": "biome format ."
+    "format:check": "biome format .",
+    "typecheck": "pnpm -r run typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

@@ -3,6 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "description": "Theia extension: an S3 mount type for @theia-shell/theia-files-mounts (webrun-files-s3).",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/statewalker/statewalker-shell-theia.git",
+    "directory": "packages/theia-files-s3"
+  },
+  "bugs": {
+    "url": "https://github.com/statewalker/statewalker-shell-theia/issues"
+  },
+  "homepage": "https://github.com/statewalker/statewalker-shell-theia/tree/main/packages/theia-files-s3#readme",
   "main": "lib/common/index.js",
   "types": "lib/common/index.d.ts",
   "files": [
