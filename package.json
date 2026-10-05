@@ -20,7 +20,8 @@
     "lint:check": "biome check .",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "typecheck": "pnpm -r run typecheck"
+    "typecheck": "pnpm -r run typecheck",
+    "rustfs": "node tools/rustfs-dev.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",

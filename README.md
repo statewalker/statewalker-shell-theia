@@ -75,6 +75,12 @@ provides it). Run everything from the repository root.
    member invitations for the app. It needs a built httpeers source tree
    (see *What will surprise you*).
 
+6. Optional, for S3 mounts on this machine: `pnpm rustfs start`. It runs RustFS in Docker
+   (S3 API on http://127.0.0.1:9100, web console on http://127.0.0.1:9101/rustfs/console/,
+   keys `theiashell` / `theiashell-secret`), creates the bucket `theia-shell`, and makes the
+   bucket's CORS rule allow the app's origins. `pnpm rustfs check` checks that rule against each
+   origin and fixes it; `pnpm rustfs stop` removes the container and keeps its data volume.
+
 `pnpm test` runs the unit tests (vitest). `pnpm test:e2e` runs the Playwright
 tests of every prototype and the app against their static builds, so build
 first.
@@ -130,6 +136,12 @@ Each prototype under `protos/` is a small app with its own e2e tests:
   `$HTTPEERS_DIR` (default: `../httpeers` next to this repository). Without
   it they fail with
   `mesh-stack: <path> is missing; build httpeers first (pnpm -r build)`.
+- **An S3 mount fails with a CORS error when the bucket does not list the page's origin.**
+  The browser reports `blocked by CORS policy: No 'Access-Control-Allow-Origin' header`.
+  `pnpm rustfs check --origin <the page's origin>` adds it. A page served from the internet
+  (`https://...`) that reaches `127.0.0.1` also needs the browser's *Local network access*
+  permission for that site; without it Chrome reports `Permission was denied for this request to
+  access the loopback address space`. The app served on `127.0.0.1` needs no permission.
 - **S3 tests skip themselves without Docker.** The S3 and restore e2e tests and
   one unit test of `theia-files-s3` run against RustFS in Docker
   (`tools/rustfs.mjs`). With no Docker they are skipped, not failed.
@@ -162,6 +174,7 @@ Each prototype under `protos/` is a small app with its own e2e tests:
 | `pnpm --filter @theia-shell/app build:prod` | The app in production mode |
 | `node tools/serve.mjs <dir> <port>` | Serve a built app |
 | `node tools/probe.mjs <url> [ms] [png]` | Load a served app; print console errors and element ids; optionally take a screenshot |
+| `pnpm rustfs start\|check\|status\|stop` | A local RustFS for S3 mounts (`tools/rustfs-dev.mjs`); `--origin <url>` (repeatable) replaces the default origins (`http://127.0.0.1:3001`, `http://localhost:3001`, `https://theia.httpeers.net`), `--no-fix` only checks, `stop --reset` also deletes the data |
 | `node tools/mesh-stack.mjs [appUrl]` | A mesh on loopback: relay, hub with its `llm` service, a fake LiteLLM, an outside origin |
 
 ### Continuous integration
