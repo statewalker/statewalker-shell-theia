@@ -1,6 +1,15 @@
 {
   "name": "@theia-shell/p5-contributions",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/statewalker/statewalker-shell-theia.git",
+    "directory": "protos/p5-contributions"
+  },
+  "bugs": {
+    "url": "https://github.com/statewalker/statewalker-shell-theia/issues"
+  },
+  "homepage": "https://github.com/statewalker/statewalker-shell-theia/tree/main/protos/p5-contributions#readme",
   "private": true,
   "theia": {
     "target": "browser-only",
