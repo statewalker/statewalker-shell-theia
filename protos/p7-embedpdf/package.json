@@ -1,6 +1,15 @@
 {
   "name": "@theia-shell/p7-embedpdf",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/statewalker/statewalker-shell-theia.git",
+    "directory": "protos/p7-embedpdf"
+  },
+  "bugs": {
+    "url": "https://github.com/statewalker/statewalker-shell-theia/issues"
+  },
+  "homepage": "https://github.com/statewalker/statewalker-shell-theia/tree/main/protos/p7-embedpdf#readme",
   "private": true,
   "theia": {
     "target": "browser-only",

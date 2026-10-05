@@ -1,6 +1,15 @@
 {
   "name": "@theia-shell/p3-explorer",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/statewalker/statewalker-shell-theia.git",
+    "directory": "protos/p3-explorer"
+  },
+  "bugs": {
+    "url": "https://github.com/statewalker/statewalker-shell-theia/issues"
+  },
+  "homepage": "https://github.com/statewalker/statewalker-shell-theia/tree/main/protos/p3-explorer#readme",
   "private": true,
   "theia": {
     "target": "browser-only",

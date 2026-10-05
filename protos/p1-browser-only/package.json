@@ -1,6 +1,15 @@
 {
   "name": "@theia-shell/p1-browser-only",
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/statewalker/statewalker-shell-theia.git",
+    "directory": "protos/p1-browser-only"
+  },
+  "bugs": {
+    "url": "https://github.com/statewalker/statewalker-shell-theia/issues"
+  },
+  "homepage": "https://github.com/statewalker/statewalker-shell-theia/tree/main/protos/p1-browser-only#readme",
   "private": true,
   "theia": {
     "target": "browser-only",
