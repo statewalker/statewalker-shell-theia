@@ -69,15 +69,15 @@ From the repository root, on Node 24 with pnpm 10 (through corepack):
    Tailwind for `app/style`), then `theia build --mode development`.
    `build:prod` uses `--mode production`.
 3. `pnpm --filter @theia-shell/app start`: serves `lib/frontend` on
-   http://127.0.0.1:3000. Any static file server works.
+   http://127.0.0.1:3001. Any static file server works.
 
 Two storage modes:
 
-- `http://127.0.0.1:3000/` keeps the **main storage** in the browser's Origin
+- `http://127.0.0.1:3001/` keeps the **main storage** in the browser's Origin
   Private File System, so files and settings survive reloads. The first visit
   asks for a password for the secrets vault (*Skip* is allowed; tick
   *Remember on this device* to not be asked again).
-- `http://127.0.0.1:3000/?storage=memory` keeps everything in memory, fresh on
+- `http://127.0.0.1:3001/?storage=memory` keeps everything in memory, fresh on
   every load, with no password prompt.
 
 An empty main storage ("Browser Storage") is seeded with `welcome.md`,
@@ -87,13 +87,13 @@ An empty main storage ("Browser Storage") is seeded with `welcome.md`,
 ### Joining a mesh
 
 Open an invitation link whose page is this app
-(`http://127.0.0.1:3000/?join=…`), or paste an invitation into the **Mesh**
+(`http://127.0.0.1:3001/?join=…`), or paste an invitation into the **Mesh**
 view. For a whole mesh on this machine (a relay, the httpeers hub daemon with
 its `llm` service over a fake LiteLLM, and an outside origin to proxy), run
 from the repository root:
 
 ```bash
-node tools/mesh-stack.mjs http://127.0.0.1:3000/   # prints admin and member invitations, and a URL minting more
+node tools/mesh-stack.mjs http://127.0.0.1:3001/   # prints admin and member invitations, and a URL minting more
 ```
 
 It needs a built httpeers source tree at `$HTTPEERS_DIR` (default

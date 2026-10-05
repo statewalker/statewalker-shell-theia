@@ -3,7 +3,7 @@
  * by hand: a circuit relay, the Node hub daemon with its `llm` service, a fake
  * LiteLLM behind it, and a plain HTTP server for the proxy to expose.
  *
- *   node tools/mesh-stack.mjs [appUrl]     # prints invitations for appUrl (default http://127.0.0.1:3000/)
+ *   node tools/mesh-stack.mjs [appUrl]     # prints invitations for appUrl (default http://127.0.0.1:3001/)
  *
  * The e2e tests run it as a child process (`app/tests/mesh-stack.ts`) and use
  * its control endpoint: Playwright loads specs as CommonJS, which cannot
@@ -122,7 +122,7 @@ function outsideOrigin() {
   });
 }
 
-export async function startMeshStack({ joinPageUrl = "http://127.0.0.1:3000/" } = {}) {
+export async function startMeshStack({ joinPageUrl = "http://127.0.0.1:3001/" } = {}) {
   const dist = (p) => pathToFileURL(join(HTTPEERS_DIR, p)).href;
   for (const p of ["apps/relay/dist/index.js", "apps/hub/dist/daemon.js"]) {
     if (!existsSync(join(HTTPEERS_DIR, p))) {
@@ -200,7 +200,7 @@ export async function startMeshStack({ joinPageUrl = "http://127.0.0.1:3000/" } 
 
 /** No top-level await: the tests load this module with `require`. */
 async function main() {
-  const appUrl = process.argv[2] ?? "http://127.0.0.1:3000/";
+  const appUrl = process.argv[2] ?? "http://127.0.0.1:3001/";
   const stack = await startMeshStack({ joinPageUrl: appUrl });
   console.log(`hub      ${stack.hubPeerId}`);
   console.log(`outside  ${stack.outsideUrl}   (a proxy upstream to try)`);

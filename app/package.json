@@ -17,7 +17,7 @@
   "scripts": {
     "build": "pnpm --filter @theia-shell/theia-files-api --filter @theia-shell/theia-shadcn --filter @theia-shell/theia-markdown --filter @theia-shell/theia-image-viewer --filter @theia-shell/theia-pdf-viewer --filter @theia-shell/theia-secret-vault --filter @theia-shell/theia-files-mounts --filter @theia-shell/theia-files-s3 --filter @theia-shell/theia-file-panels --filter @theia-shell/app-files --filter @theia-shell/theia-httpeers --filter @theia-shell/theia-httpeers-proxy --filter @theia-shell/theia-llm-chat --filter @theia-shell/app-style build && theia build --mode development",
     "build:prod": "pnpm --filter @theia-shell/theia-files-api --filter @theia-shell/theia-shadcn --filter @theia-shell/theia-markdown --filter @theia-shell/theia-image-viewer --filter @theia-shell/theia-pdf-viewer --filter @theia-shell/theia-secret-vault --filter @theia-shell/theia-files-mounts --filter @theia-shell/theia-files-s3 --filter @theia-shell/theia-file-panels --filter @theia-shell/app-files --filter @theia-shell/theia-httpeers --filter @theia-shell/theia-httpeers-proxy --filter @theia-shell/theia-llm-chat --filter @theia-shell/app-style build && theia build --mode production",
-    "start": "node ../tools/serve.mjs lib/frontend 3000",
+    "start": "node ../tools/serve.mjs lib/frontend 3001",
     "test:e2e": "playwright test"
   },
   "dependencies": {
