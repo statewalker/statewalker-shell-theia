@@ -33,5 +33,18 @@ contribution serving something else adds its policy there.
 permissive dial gater, so it can join a mesh whose relay is on loopback too
 (`tools/mesh-stack.mjs`); `?meshDev=1` does the same elsewhere.
 
+## Entry points
+
+A private package of this workspace (not published). Theia loads it through
+the `theiaExtensions` entry of its `package.json`; it is used by `@theia-shell/theia-httpeers-proxy`, `@theia-shell/theia-llm-chat` and the app.
+
+- `main`: `lib/common/index.js`: `MeshContribution`, `shellRules` and the peers-list and status-text model (`mesh-model.ts`).
+- `MeshService` is imported by path: `lib/browser/mesh-service`.
+- `lib/sw.js`: the ServiceWorker, copied there by `pnpm build` (see *The edge*).
+- `theiaExtensions`: `frontendOnly` → `lib/browser/mesh-frontend-module`.
+
+Build and test it with `pnpm --filter @theia-shell/theia-httpeers build` and
+`pnpm --filter @theia-shell/theia-httpeers test`.
+
 Tests: `pnpm test` runs 8 unit tests (the peers list, the status text, the
 rules). The e2e tests are in [`app/tests/mesh.spec.ts`](../../app/tests/mesh.spec.ts).

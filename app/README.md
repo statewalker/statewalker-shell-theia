@@ -28,24 +28,17 @@ The screenshots show the opt-in shadcn/ui style (*Appearance: Toggle shadcn/ui S
 
 ## Run it
 
-The mesh packages are not on npm yet: they are linked from an
-[httpeers](https://github.com/statewalker/httpeers) checkout next to this
-repository (`../httpeers`, beside `statewalker-sandbox`), which must be built
-first:
+`@theia-shell/app` is a private package of this workspace (nothing is
+published). From the repository root, on Node 24 with pnpm 10 (corepack):
 
 ```bash
-git clone https://github.com/statewalker/httpeers ../httpeers   # from the statewalker-sandbox root's parent
-(cd ../httpeers && pnpm install && pnpm -r build)
-```
-
-Then:
-
-```bash
-cd apps/theia-shell
 pnpm install
-pnpm --filter @theia-shell/app build     # the extensions (tsc), then `theia build`
+pnpm --filter @theia-shell/app build     # the extensions (tsc), then `theia build --mode development`
 pnpm --filter @theia-shell/app start     # http://127.0.0.1:3000
 ```
+
+`build:prod` builds with `theia build --mode production` instead. The httpeers
+packages the mesh extensions use come from npm.
 
 Any static file server works: `app/lib/frontend/` is the whole app.
 
@@ -120,7 +113,7 @@ The design is in
 | Package | Role |
 |---|---|
 | [`packages/theia-files-api`](../packages/theia-files-api) | **The file system.** `FilesApiFileSystemProvider` implements Theia's `FileSystemProvider` over a `FilesApi`. The frontend module rebinds `FileSystemProvider` (replacing browser-only OPFS) and `WorkspaceServer` (opening the `FilesApi` root on a first visit), reveals the explorer, and names the root. |
-| [`packages/theia-markdown`](../packages/theia-markdown) | **The extension.** Commands, menus, keybindings, the preview and the outline view (below). |
+| [`packages/theia-markdown`](../packages/theia-markdown) | **The Markdown extension.** Commands, menus, keybindings, the preview and the outline view (below). |
 | [`packages/theia-image-viewer`](../packages/theia-image-viewer) | **Image viewer extension.** Opens PNG, JPEG, GIF, WebP, AVIF, BMP, ICO and SVG files in a zoomable view, with commands, tab-toolbar buttons, a *View → Image* menu and keybindings. |
 | [`packages/theia-pdf-viewer`](../packages/theia-pdf-viewer) | **PDF viewer extension.** Opens `.pdf` files in [EmbedPDF](https://www.embedpdf.com/) (PDFium in WebAssembly), offline. |
 | [`packages/theia-shadcn`](../packages/theia-shadcn) | **shadcn/ui.** The components (on Theia's shared React), the tokens, and an opt-in *shadcn/ui style* (`appearance.style`, or *Appearance: Toggle shadcn/ui Style*) that restyles Theia's menus, dialogs, buttons, inputs and toasts with CSS only. The default is stock Theia. Either style works with any colour theme. |
@@ -136,6 +129,8 @@ The design is in
 | `app` | The browser-only Theia application (`"theia": { "target": "browser-only" }`). It also includes `@theia/search-in-workspace` (*Find in Files*, `Ctrl+Shift+F`) and `@theia/file-search` (*Quick Open*, `Ctrl+P`). Both use their browser-only modules, which walk the workspace through Theia's `FileService`, and so the `FilesApi`. |
 
 ### Markdown extension contributions
+
+See also [`packages/theia-markdown`](../packages/theia-markdown).
 
 | Kind | What |
 |---|---|

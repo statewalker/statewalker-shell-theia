@@ -1,10 +1,11 @@
-# theia-shell
+# statewalker-shell-theia
 
 An Eclipse Theia 1.76 application that runs **only in the browser**. It has a
 file explorer over a `@statewalker/webrun-files` `FilesApi`, a Monaco editor
 that saves back to it, a Markdown extension contributing commands, menus,
 keybindings and views, and separate image and PDF viewer extensions (the PDF
-viewer uses EmbedPDF). Its look is stock Theia or, with one switch, shadcn/ui applied with Tailwind.
+viewer uses EmbedPDF). Its look is stock Theia or, with one switch, shadcn/ui
+applied with Tailwind.
 
 It is also a member of an **httpeers mesh**: it joins from an invitation,
 shows the peers and what they serve, lets an admin invite others, chats with
@@ -16,30 +17,48 @@ components installed at runtime.
 provide a `FilesApi`. [`PLAN.md`](PLAN.md) is the plan this followed:
 prototypes first, then the app, red/green TDD throughout.
 
-This is a self-contained pnpm workspace, excluded from the sandbox root
-workspace. Theia needs a hoisted `node_modules` and brings a large dependency
-tree of its own.
+## Development
+
+A pnpm 10 workspace (`pnpm@10.16.1`, through corepack) on Node 24, with Biome 2
+for lint and format. Theia needs a hoisted `node_modules` (see `.npmrc`) and
+brings a large dependency tree of its own. The httpeers and webrun packages
+come from npm (`@statewalker/*`, versions in the `catalog:` of
+`pnpm-workspace.yaml`).
 
 ```bash
-(cd ../../../httpeers && pnpm install && pnpm -r build)   # the mesh packages, linked from a sibling checkout
+corepack enable
 pnpm install
 pnpm build          # every package, prototype and the app
 pnpm test           # unit tests (vitest)
 pnpm test:e2e       # Playwright, per prototype and app, against the static builds
-node tools/mesh-stack.mjs http://127.0.0.1:3000/   # a whole mesh on loopback, with invitations for the app
+pnpm typecheck
+pnpm lint:check     # Biome; `pnpm lint` and `pnpm format` write fixes
+pnpm --filter @theia-shell/app start                 # serve the built app on http://127.0.0.1:3000
+node tools/mesh-stack.mjs http://127.0.0.1:3000/     # a whole mesh on loopback, with invitations for the app
 ```
 
-The httpeers packages are not on npm yet, so the mesh extensions depend on
-them with `link:` to `../httpeers` beside `statewalker-sandbox`.
+One package at a time: `pnpm --filter @theia-shell/<name> build` or `test`.
+CI runs the shared statewalker workflow
+([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): frozen install, lint,
+format, build, typecheck and tests.
+
+## Releases
+
+Nothing is published. Every package is `private` and named `@theia-shell/*`;
+they are used only inside this workspace, through `workspace:` dependencies of
+the app.
 
 ## Layout
 
 ```
 PLAN.md                     the plan: questions, prototypes, the app
+docs/specs, docs/plans      designs and implementation plans (written when this lived in
+                            statewalker-sandbox under apps/theia-shell; their paths are relative to that)
 tools/serve.mjs             a plain static file server (all a browser-only app needs)
 tools/playwright.base.mjs   shared e2e config: serve <app>/lib/frontend, drive Chromium
 tools/probe.mjs             debugging aid: load a served app, print console errors and DOM ids, screenshot
-tools/mesh-stack.mjs        a whole httpeers mesh on loopback: relay, hub daemon, fake LiteLLM, an outside origin
+tools/mesh-stack.mjs        test fixture: a whole mesh on loopback (relay, hub daemon, fake LiteLLM, an outside origin)
+tools/rustfs.mjs            test fixture: RustFS (S3) in Docker, with CORS for the app
 protos/p1…p7                one question each; README = question, answer, red/green log
 packages/theia-files-api    FilesApi → Theia file system (extension)
 packages/theia-markdown     the Markdown extension
@@ -54,8 +73,6 @@ packages/theia-httpeers     this browser as a mesh member: Mesh view, peers, inv
 packages/theia-httpeers-proxy  expose outside origins to the mesh; call other members' proxies
 packages/theia-llm-chat     the LLM chat: the mesh hub's LLM service or any OpenAI-compatible endpoint
 app/                        the application, app/files (its defaults and seed), app/style (its Tailwind build), e2e tests
-tools/rustfs.mjs            test fixture: RustFS (S3) in Docker, with CORS for the app
-tools/mesh-stack.mjs        test fixture: a whole mesh on loopback (relay, hub, fake LiteLLM, an outside origin)
 ```
 
 ## Mounts and secrets
@@ -88,7 +105,6 @@ settings and a password-protected, WebCrypto-encrypted vault for secrets. See
   `httpeers-session-shell`) inside a widget, never on the shell's origin
   (security model §6.2, §11).
 - **A `FilesApi` served by a peer**, mounted as a second workspace root.
-- **Publish the httpeers packages**, so the `link:` to a sibling checkout goes.
 - **A runtime installer** (building on P6): serve plugin files from a
   `FilesApi` or a mesh peer through a Service Worker (`webrun-http-browser`),
   keep the installed list in IndexedDB, and gate installation on signed

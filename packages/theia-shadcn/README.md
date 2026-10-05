@@ -6,6 +6,18 @@ and toasts with them. It follows the approach in the *Theia — theming &
 shadcn/ui alignment* note: shadcn's variables are the single source of truth,
 Theia's DOM is restyled with them, and its rendering is left alone.
 
+## Entry points
+
+A private package of this workspace (not published). Theia loads it through
+the `theiaExtensions` entry of its `package.json`; it is used by `@theia-shell/theia-markdown`, `app/style` and the app.
+
+- `main`: `lib/browser/index.js` (from `src/browser/index.ts`): the components, `cn` and the style preference (`shadcn-style.ts`).
+- `src/browser/style/theme.css`: the Tailwind source an app compiles (see below).
+- `theiaExtensions`: `frontend` and `frontendOnly` → `lib/browser/shadcn-frontend-module`.
+
+Build and test it with `pnpm --filter @theia-shell/theia-shadcn build` and
+`pnpm --filter @theia-shell/theia-shadcn test`.
+
 ## Two styles, on top of any colour theme
 
 The style is independent of the colour theme, so one app can run with either

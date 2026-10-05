@@ -41,5 +41,16 @@ Styling is Tailwind utility classes coloured by the shadcn/ui tokens. The app
 compiles them, as [`app/style`](../../app/style) does. In an app without that
 build, the classes have no CSS and the layout falls apart.
 
+## Entry points
+
+A private package of this workspace (not published). Theia loads it through
+the `theiaExtensions` entry of its `package.json`; it is used by `app/files` (for `createTextPdf`) and the app.
+
+- `main`: `lib/common/index.js`: `createTextPdf` and `isPdfPath`.
+- `theiaExtensions`: `frontend` and `frontendOnly` → `lib/browser/pdf-viewer-frontend-module`.
+
+Build and test it with `pnpm --filter @theia-shell/theia-pdf-viewer build` and
+`pnpm --filter @theia-shell/theia-pdf-viewer test`.
+
 Tests: `pnpm test` runs 17 unit tests. The e2e tests are in P7 and in
 [`app/tests/viewers.spec.ts`](../../app/tests/viewers.spec.ts).

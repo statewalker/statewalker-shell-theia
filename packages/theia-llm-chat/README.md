@@ -22,12 +22,25 @@ database. The endpoint and key are kept per source (profiles `theia-mesh` and
 `theia-custom`).
 
 **Model output is data.** Replies are rendered with the Markdown extension's
-renderer: raw HTML is escaped and the result is sanitized with DOMPurify.
+`renderMarkdown` (markdown-it with `html: false`): raw HTML is escaped and
+`javascript:` links are refused. Unlike the Markdown preview, the chat does not
+also pass the result through DOMPurify.
 
 `src/common/core/` and `src/common/mesh/discover.ts` are ported unchanged
 from `apps/llm-chat`, together with their tests; they have no framework or
 DOM in them. `src/common/chat-setup.ts` is the flow `mesh.html` and
 `index.html` each implement in React, as one state machine.
+
+## Entry points
+
+A private package of this workspace (not published). Theia loads it through
+the `theiaExtensions` entry of its `package.json`; it is used by the app; it depends on `theia-httpeers` and `theia-markdown`.
+
+- `main`: `lib/common/index.js`: the setup flow (`chat-setup.ts`), llm-chat's core (`core/`: the OpenAI client, chat controller, config and session stores) and mesh discovery (`mesh/discover.ts`).
+- `theiaExtensions`: `frontendOnly` → `lib/browser/chat-frontend-module`.
+
+Build and test it with `pnpm --filter @theia-shell/theia-llm-chat build` and
+`pnpm --filter @theia-shell/theia-llm-chat test`.
 
 Tests: `pnpm test` runs 111 unit tests: 97 ported from llm-chat (the OpenAI
 client and its SSE parsing, the chat controller, the config and session stores,

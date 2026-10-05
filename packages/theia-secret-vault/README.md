@@ -5,6 +5,18 @@ Theia binds `KeyStoreService` (behind `CredentialsService`, and VS Code
 extensions' `context.secrets`) to a stub that silently drops every secret; this
 package rebinds it to an encrypted vault.
 
+## Entry points
+
+A private package of this workspace (not published). Theia loads it through
+the `theiaExtensions` entry of its `package.json`; it is used by `@theia-shell/theia-files-mounts` and the app.
+
+- `main`: `lib/common/index.js`: `SecretVault`, `VaultCorruptError` and `VaultKeyStore`.
+- `VaultService` and `VaultLocation` are imported by path: `lib/browser/vault-service`.
+- `theiaExtensions`: `frontend` and `frontendOnly` → `lib/browser/vault-frontend-module`.
+
+Build and test it with `pnpm --filter @theia-shell/theia-secret-vault build` and
+`pnpm --filter @theia-shell/theia-secret-vault test`.
+
 ## Files
 
 The vault lives in a folder of a `FilesApi` (the app's main storage, `/.shell`):

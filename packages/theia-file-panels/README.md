@@ -5,6 +5,17 @@ a breadcrumb whose segments list their sibling folders, the explorer's file comm
 copy/move by drag and drop and by menu commands. Design:
 [`docs/specs/2026-09-26-file-panels-design.md`](../../docs/specs/2026-09-26-file-panels-design.md).
 
+## Entry points
+
+A private package of this workspace (not published). Theia loads it through
+the `theiaExtensions` entry of its `package.json`; it is used by the app.
+
+- `main`: `lib/common/index.js`: the breadcrumb model, sorting, formats, the transfer planner and runner, the messages (`file-panels-nls.ts`) and the locale.
+- `theiaExtensions`: `frontend` and `frontendOnly` → `lib/browser/file-panels-frontend-module`.
+
+Build and test it with `pnpm --filter @theia-shell/theia-file-panels build` and
+`pnpm --filter @theia-shell/theia-file-panels test`.
+
 ## Opening a panel
 
 - **View → Open Files Panel** (also in the command palette) opens a panel at the first workspace
@@ -204,8 +215,7 @@ protected members only, no private members, no copies of Theia internals:
 
 ## Notes
 
-- `biome.json`'s `javascript.parser.unsafeParameterDecoratorsEnabled` (in `apps/theia-shell`,
-  repo-wide) is needed for `FilePanelTreeWidget` and `PanelAwareNavigatorWidget`, whose
+- The root `biome.json`'s `javascript.parser.unsafeParameterDecoratorsEnabled` (repo-wide) is needed for `FilePanelTreeWidget` and `PanelAwareNavigatorWidget`, whose
   constructors take `@inject(...)` parameters — not property injection like the rest of this
   package — because each must forward them to `super(props, model, contextMenuRenderer)`, exactly
   like the Theia classes they extend.

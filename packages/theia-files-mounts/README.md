@@ -8,6 +8,18 @@ holds the settings and the secret vault. Every backend is an existing
 them. The design is in
 [`docs/specs/2026-09-25-pluggable-files-api-design.md`](../../docs/specs/2026-09-25-pluggable-files-api-design.md).
 
+## Entry points
+
+A private package of this workspace (not published). Theia loads it through
+the `theiaExtensions` entry of its `package.json`; it is used by `@theia-shell/theia-files-s3`, `app/files` and the app; it depends on `theia-files-api` and `theia-secret-vault`.
+
+- `main`: `lib/common/index.js` (from `src/common/index.ts`): `MountType`, `MountField`, `MountContext`, `NeedsUserGesture`, `SecretsLocked`, `FilesApiLayer`, `MountedFilesApi`, `SerialQueue`, and the config, key, table, form, folder-list and workspace-file helpers.
+- The Theia services are imported by path: `lib/browser/mount-service` (`MountService`), `lib/browser/mount-preferences` (`MountDefaults`), `lib/browser/main-storage`, `lib/browser/boot-gate`.
+- `theiaExtensions`: `frontend` and `frontendOnly` → `lib/browser/mounts-frontend-module`.
+
+Build and test it with `pnpm --filter @theia-shell/theia-files-mounts build` and
+`pnpm --filter @theia-shell/theia-files-mounts test`.
+
 ## Extension points
 
 **`MountType`** — a kind of file system. Bind with `bind(MountType).to(…)`.

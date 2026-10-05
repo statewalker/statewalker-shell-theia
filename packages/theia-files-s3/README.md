@@ -5,6 +5,17 @@ The S3 mount type for [`theia-files-mounts`](../theia-files-mounts): an S3 bucke
 `@statewalker/webrun-files-s3`. It is its own package because
 `@aws-sdk/client-s3` is large: an app that does not want S3 does not depend on it.
 
+## Entry points
+
+A private package of this workspace (not published). Theia loads it through
+the `theiaExtensions` entry of its `package.json`; it is used by the app; it depends on `theia-files-mounts`.
+
+- `main`: `lib/common/index.js`: `s3ClientOptions` and `normalizeEndpoint`.
+- `theiaExtensions`: `frontend` and `frontendOnly` → `lib/browser/s3-frontend-module` (binds the S3 `MountType`).
+
+Build and test it with `pnpm --filter @theia-shell/theia-files-s3 build` and
+`pnpm --filter @theia-shell/theia-files-s3 test`.
+
 ## The mount type
 
 Fields: endpoint URL (http/https; a trailing slash is dropped), region (default

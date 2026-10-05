@@ -22,6 +22,17 @@ Styling is Tailwind utility classes coloured by the shadcn/ui tokens. The app
 compiles them, as [`app/style`](../../app/style) does. In an app without that
 build, the classes have no CSS and the layout falls apart.
 
+## Entry points
+
+A private package of this workspace (not published). Theia loads it through
+the `theiaExtensions` entry of its `package.json`; it is used by the app.
+
+- `main`: `lib/common/index.js`: `imageMimeType`, `fitScale`, `ZOOM_LEVELS`, `stepZoom` and `formatZoom` (`image-view.ts`).
+- `theiaExtensions`: `frontend` and `frontendOnly` → `lib/browser/image-viewer-frontend-module`.
+
+Build and test it with `pnpm --filter @theia-shell/theia-image-viewer build` and
+`pnpm --filter @theia-shell/theia-image-viewer test`.
+
 Tests: `pnpm test` runs 22 unit tests (MIME types, fit, zoom steps, and which
 file changes should trigger a reload). The e2e tests are in
 [`app/tests/viewers.spec.ts`](../../app/tests/viewers.spec.ts).

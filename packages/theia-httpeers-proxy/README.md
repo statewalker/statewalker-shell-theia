@@ -28,6 +28,17 @@ that page and must answer CORS for the app's origin.
 httpeers' demos; an app does not import from another app. The routing (a Hono
 router rebuilt when the table changes) is in `proxy-table.ts`.
 
+## Entry points
+
+A private package of this workspace (not published). Theia loads it through
+the `theiaExtensions` entry of its `package.json`; it is used by the app; it depends on `theia-httpeers`.
+
+- `main`: `lib/common/index.js`: the route table (`proxy-table.ts`), the upstream fetch (`proxy-upstream.ts`) and the route store (`route-store.ts`, `StoredRoute`).
+- `theiaExtensions`: `frontendOnly` → `lib/browser/proxy-frontend-module`.
+
+Build and test it with `pnpm --filter @theia-shell/theia-httpeers-proxy build` and
+`pnpm --filter @theia-shell/theia-httpeers-proxy test`.
+
 Tests: `pnpm test` runs 15 unit tests (routing on segment boundaries, header
 hygiene, secrets never persisted, requests re-rooted below the mount). The e2e
 tests are in [`app/tests/mesh.spec.ts`](../../app/tests/mesh.spec.ts) (a member
