@@ -4,7 +4,7 @@ import { createReadStream, statSync } from "node:fs";
 import { createServer } from "node:http";
 import { extname, join, normalize } from "node:path";
 
-const [root = ".", port = "3000"] = process.argv.slice(2);
+const [root = ".", port = "3001"] = process.argv.slice(2);
 const types = {
   ".html": "text/html; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",

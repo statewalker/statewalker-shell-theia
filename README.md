@@ -69,9 +69,9 @@ provides it). Run everything from the repository root.
 2. `pnpm install`
 3. `pnpm build`: every package (`tsc`), every prototype and the app (`theia build`).
 4. `pnpm --filter @theia-shell/app start`: serves `app/lib/frontend` on
-   http://127.0.0.1:3000.
+   http://127.0.0.1:3001.
 5. Optional, for a mesh on this machine:
-   `node tools/mesh-stack.mjs http://127.0.0.1:3000/`. It prints admin and
+   `node tools/mesh-stack.mjs http://127.0.0.1:3001/`. It prints admin and
    member invitations for the app. It needs a built httpeers source tree
    (see *What will surprise you*).
 
