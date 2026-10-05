@@ -1,54 +1,115 @@
 # @theia-shell/theia-files-s3
 
-The S3 mount type for [`theia-files-mounts`](../theia-files-mounts): an S3 bucket
-(AWS, or any S3-compatible server) as a root folder of the app, through
-`@statewalker/webrun-files-s3`. It is its own package because
-`@aws-sdk/client-s3` is large: an app that does not want S3 does not depend on it.
+## What it is
 
-## The mount type
+The S3 mount type for
+[`@theia-shell/theia-files-mounts`](../theia-files-mounts): an S3 bucket (AWS,
+or any S3-compatible server such as RustFS or MinIO) as a root folder of the
+app, through `@statewalker/webrun-files-s3`. The folder list offers it as
+*New S3 Bucket…*.
 
-Fields: endpoint URL (http/https; a trailing slash is dropped), region (default
-`us-east-1`), bucket, prefix, and two secrets — access key ID and secret access
-key — which go to the vault, never to `settings.json`. Path-style addressing, so
-S3-compatible servers (RustFS, MinIO) work as AWS does. Mounting lists the bucket
-once, so bad keys, a missing bucket or a CORS refusal show as the mount's status
-("Cloud (unavailable: …)") instead of on first use; with the vault locked it is
-"Cloud (locked)" until *Secrets: Unlock*.
+## Why it exists
 
-**CORS.** A browser only reaches a bucket whose CORS rule allows the app's origin
-and every header the SDK sends. `S3_BROWSER_HEADERS` in
-[`tools/rustfs.mjs`](../../tools/rustfs.mjs) is the list that works (it includes
-`x-amz-checksum-mode`, which reads send, and `x-amz-copy-source` /
-`x-amz-metadata-directive`, which move and copy send — S3 has no native move,
-so `move()` is `CopyObject` + `remove()`); use it for real buckets too.
+`@aws-sdk/client-s3` is large. As its own package, the S3 type is in an app's
+bundle only when the app lists it; an app that does not want S3 does not
+depend on the SDK.
 
-## Tests
+## How to use
 
-`pnpm test` runs the unit tests. The S3 end-to-end tests (in
-[`app/tests/s3.spec.ts`](../../app/tests/s3.spec.ts)) and one unit test here
-run against **RustFS** in Docker, started by [`tools/rustfs.mjs`](../../tools/rustfs.mjs);
-they are skipped when Docker is not available.
+A private package of this workspace, not published. Add it to an app's
+dependencies as `"@theia-shell/theia-files-s3": "workspace:^"`, next to
+`theia-files-mounts`. Theia loads it through its `theiaExtensions` entry:
+`frontend` and `frontendOnly` → `lib/browser/s3-frontend-module`, which binds
+`S3MountType` as a `MountType`.
 
-A browser can only reach a bucket whose CORS rule allows the app's origin.
-The fixture sets one with `PutBucketCors`. RustFS echoes `AllowedHeaders`
-literally, and a `*` never covers `Authorization` (Fetch spec), which every
-signed S3 request sends, so the rule lists the SDK's headers explicitly
-(`S3_BROWSER_HEADERS`).
+`main` (`lib/common/index.js`) exports `s3ClientOptions(config, secrets)` and
+`normalizeEndpoint(value)`.
 
-## Red / green
+The mount's fields: *Endpoint URL* (`endpoint`, http or https; a trailing
+slash is dropped), *Region* (`region`, default `us-east-1`), *Bucket*
+(`bucket`), *Prefix (optional)* (`prefix`), and two secrets, *Access key ID*
+(`accessKeyId`) and *Secret access key* (`secretAccessKey`). The secrets go to
+the vault, never to `settings.json`.
 
-- **RustFS fixture.** Red: 1 of 1 against a stub (`not implemented`). Green: 1 of 1 —
-  the preflight from `http://127.0.0.1:3100` allows the origin and each signed header.
-- **`s3ClientOptions` / `normalizeEndpoint`** (`tests/s3-options.test.ts`). Red: the
-  module missing. Green: 3 of 3; the package's 4 of 4.
-- **End to end** (`app/tests/s3.spec.ts`). Red: 4 of 4 (no "S3 Bucket" type before
-  the module joined the app). Then 2 of 4: the first read failed CORS because the
-  SDK's `x-amz-checksum-mode` header was not in the fixture's list (added), and a
-  reload right after mounting could come before Theia wrote `settings.json` (the
-  tests now wait for it). Green: 4 of 4, twice in a row.
-- **Move and copy within a mount** (`app/tests/s3.spec.ts`, the CopyObject test).
-  Red: 1 of 1 — `S3FilesApi.copy` (used by both `copy()` and `move()`) sent
-  `CopyObjectCommand`, whose `x-amz-copy-source` header was not in the fixture's
-  `AllowedHeaders`; the browser's preflight was refused ("Failed to fetch") and
-  the object never moved. Green: 1 of 1 once `x-amz-copy-source` and
-  `x-amz-metadata-directive` were added; the full suite is 5 of 5.
+Build and test: `pnpm --filter @theia-shell/theia-files-s3 build` and
+`pnpm --filter @theia-shell/theia-files-s3 test` (4 unit tests; one needs
+Docker).
+
+## Examples
+
+A mount in `settings.json` (the keys are entered in the form and kept in the
+vault):
+
+```json
+{
+  "files.mounts": [
+    {
+      "key": "cloud", "name": "Cloud", "type": "s3",
+      "config": { "endpoint": "http://127.0.0.1:9000", "region": "us-east-1", "bucket": "notes", "prefix": "" }
+    }
+  ]
+}
+```
+
+The client options the type builds, for use outside the mount:
+
+```ts
+import { S3Client } from "@aws-sdk/client-s3";
+import { s3ClientOptions } from "@theia-shell/theia-files-s3";
+
+const client = new S3Client(
+  s3ClientOptions(
+    { endpoint: "http://127.0.0.1:9000/", region: "" },
+    { accessKeyId: "…", secretAccessKey: "…" },
+  ),
+); // endpoint "http://127.0.0.1:9000", region "us-east-1", path-style
+```
+
+## Internals
+
+### Path-style addressing, so S3-compatible servers work
+
+`s3ClientOptions` sets `forcePathStyle: true`. RustFS and MinIO serve buckets
+under the path, not as subdomains, and AWS accepts both.
+
+### Errors show when mounting, not on first use
+
+`create` lists the bucket once. Bad keys, a missing bucket or a CORS refusal
+then show as the mount's status, `Cloud (unavailable: …)`, instead of on the
+first file opened. With the vault locked the mount is `Cloud (locked)` until
+*Secrets: Unlock*. With the vault unlocked but no keys stored, the status is
+`The access keys are missing; edit the mount to enter them.` A malformed
+endpoint is refused with
+`The endpoint must be an http:// or https:// URL, not "<value>".`
+
+### A browser reaches only buckets whose CORS rule allows it
+
+The browser calls S3 directly, so the bucket's CORS rule must allow the app's
+origin and every header the SDK sends. A `*` in `AllowedHeaders` does not
+cover `Authorization`, which every signed request sends, and some servers
+(RustFS) echo `AllowedHeaders` literally. `S3_BROWSER_HEADERS` in
+[`tools/rustfs.mjs`](../../tools/rustfs.mjs) is the list that works; use it
+for real buckets too. It includes `x-amz-checksum-mode`, which reads send,
+and `x-amz-copy-source` and `x-amz-metadata-directive`, which copy and move
+send. S3 has no native move, so `move()` is `CopyObject` plus `remove()`.
+Without those headers the preflight is refused and the browser reports
+`Failed to fetch`.
+
+### Tests run against RustFS in Docker
+
+One unit test here and the S3 e2e tests in
+[`app/tests/s3.spec.ts`](../../app/tests/s3.spec.ts) run against RustFS in
+Docker, started by [`tools/rustfs.mjs`](../../tools/rustfs.mjs), which sets the
+bucket's CORS rule with `PutBucketCors`. They are skipped when Docker is not
+available.
+
+### Dependencies
+
+`@aws-sdk/client-s3` (the client), `@statewalker/webrun-files-s3` (the
+`FilesApi` over it), `@statewalker/webrun-files`, `theia-files-mounts` (the
+`MountType` it implements) and `@theia/core`.
+
+## License
+
+No license is declared: there is no LICENSE file and no `license` field in
+`package.json`.

@@ -1,11 +1,78 @@
 # @theia-shell/theia-file-panels
 
-Midnight-Commander-style file panels for the theia-shell app: one-folder views in the main area,
-a breadcrumb whose segments list their sibling folders, the explorer's file commands, and
-copy/move by drag and drop and by menu commands. Design:
-[`docs/specs/2026-09-26-file-panels-design.md`](../../docs/specs/2026-09-26-file-panels-design.md).
+## What it is
 
-## Opening a panel
+Midnight-Commander-style file panels for a Theia app: one-folder views in the
+main area, a breadcrumb whose segments list their sibling folders, the
+explorer's file commands, and copy/move between panels and the explorer by
+drag and drop and by menu commands.
+
+## Why it exists
+
+Theia's explorer is one tree for the whole workspace. Moving files between two
+distant folders, or between two mounts, means scrolling one tree back and
+forth. Two panels side by side, each on one folder, make that a single drag,
+with a dialog that says what happens to clashing names. The explorer keeps its
+own behaviour; it only learns to accept a drag from a panel.
+
+## How to use
+
+A private package of this workspace, not published. Add it to an app's
+dependencies as `"@theia-shell/theia-file-panels": "workspace:^"`. Theia loads
+it through its `theiaExtensions` entry: `frontend` and `frontendOnly` →
+`lib/browser/file-panels-frontend-module`. It works over any Theia file
+system; in this app every mount is a workspace root.
+
+`main` (`lib/common/index.js`) exports the logic the widgets use, with no
+widgets in it: the breadcrumb model (`crumbsOf`, `containingRoot`, `outsideRoots`, …), sorting (`compareEntries`, `toggleSort`),
+formats (`formatSize`, `formatCount`, `formatDate`), the transfer planner
+(`planTransfer`, `freeName`, `validateName`, `dropOptions`, `invalidDrop`)
+and runner, the messages (`file-panels-nls.ts`) and the locale.
+
+| Contribution | What |
+|---|---|
+| *View → Open Files Panel* (also *Files Panel: Open Files Panel* in the palette) | Opens a panel at the first workspace root |
+| *Open in Files Panel* (explorer context menu) | Opens a panel on a folder, or on a file's parent folder |
+| Tab-bar toolbar | *Go Up* and *Refresh*, acting on the panel whose tab bar they sit on |
+| Panel context menu | *Open*, *Copy to Other Panel…*, *Move to Other Panel…*, and Theia's own *Open With…*, *Rename*, *Delete*, *New File*, *New Folder*, *Duplicate*, *Copy Path*, *Reveal in Explorer* |
+
+Build and test: `pnpm --filter @theia-shell/theia-file-panels build` and
+`pnpm --filter @theia-shell/theia-file-panels test` (63 unit tests). The e2e
+tests are in [`app/tests/file-panels.spec.ts`](../../app/tests/file-panels.spec.ts).
+
+## Examples
+
+Open a panel on a folder from another extension, through the command behind
+*Open in Files Panel*:
+
+```ts
+import type { CommandService } from "@theia/core/lib/common/command";
+import URI from "@theia/core/lib/common/uri";
+
+declare const commands: CommandService; // injected
+await commands.executeCommand("file-panels.openAt", new URI("file:///browser/notes"));
+```
+
+Plan a batch copy with the dialog's clash rules, without any UI:
+
+```ts
+import URI from "@theia/core/lib/common/uri";
+import { planTransfer } from "@theia-shell/theia-file-panels";
+
+const plan = planTransfer({
+  sources: [{ uri: new URI("file:///browser/a.md"), isDirectory: false }],
+  target: new URI("file:///temp"),
+  existing: new Set(["a.md"]),
+  op: "copy",
+  clash: "keepBoth",
+  copySuffix: (n) => (n === 1 ? " copy" : ` copy ${n}`),
+});
+// plan.steps: [{ op: "copy", from: …/a.md, to: file:///temp/a copy.md, overwrite: false }]
+```
+
+## Internals
+
+### Where a panel opens
 
 - **View → Open Files Panel** (also in the command palette) opens a panel at the first workspace
   root — in this app, where every mount is a workspace root, the main storage ("Browser
@@ -15,7 +82,7 @@ copy/move by drag and drop and by menu commands. Design:
 - A new panel opens **split to the right** of the current panel; from anywhere else, as a tab in
   the main area.
 
-## The panel
+### A panel shows one folder and never leaves the workspace roots
 
 One folder, flat: folders first, then files, sorted by the active column — name (with
 `Intl.Collator`, `file2` before `file10`), size or modified — ascending or descending; clicking a
@@ -60,7 +127,7 @@ over Theia's own tree rows, not a literal `<table>`.
   `file:///`) comes back at the first root, with the same notice. Either way the panel is never
   dropped from the layout.
 
-## Breadcrumb
+### Breadcrumb segments list their siblings
 
 Segments run from the workspace root that contains the current folder down to it; clicking one
 navigates there. An overflowing path collapses its middle segments into **…**, which opens a list
@@ -76,7 +143,7 @@ row; its drag events stop at the segment, so the main area's own drop handling (
 every dragged file in an editor, and whose `link` drop effect would cancel the drop) never sees
 them.
 
-## Drops and transfers
+### Drops ask before they copy, move or rename
 
 | Source ↓ · Target → | Into a panel | Into the explorer |
 |---|---|---|
@@ -114,7 +181,7 @@ them.
   synchronous phase ends, so every drop handler in this package reads it in full **before its
   first `await`**.
 
-## Context menu
+### The context menu acts on the panel's own selection
 
 - **Open** is the panel's own command, acting on the panel's selection (the navigator's own `Open`
   acts on the navigator's selection instead, which is why it is not reused here).
@@ -127,7 +194,7 @@ them.
   panel.
 - The menu has its own path (`FILE_PANEL_CONTEXT_MENU`), independent of the explorer's layout.
 
-## Extension rule
+### The explorer gains exactly one case: a drag from a panel
 
 The explorer's own behaviour never changes; it gains exactly one case, a drag from a panel.
 `PanelAwareNavigatorWidget extends FileNavigatorWidget` and overrides only the protected
@@ -152,7 +219,7 @@ protected members only, no private members, no copies of Theia internals:
   `fileService` and the public `navigateTo` and `root`.
 - `FilePanelWidget extends BaseWidget` overrides `onActivateRequest` and `onResize`.
 
-## Internationalization
+### Every string is localizable
 
 - Every user-visible string is a function in `src/common/file-panels-nls.ts` that calls
   `nls.localize("theia-shell/file-panels/<key>", "<English default>", ...)` with a string-literal
@@ -164,48 +231,41 @@ protected members only, no private members, no copies of Theia internals:
   (`Intl.NumberFormat`, `style: "unit"`), dates (`Intl.DateTimeFormat`) and name ordering
   (`Intl.Collator`) are formatted through `Intl`, not through message keys — they follow the
   platform's locale, not a translation catalog.
-- **No translation provider yet**: browser-only Theia binds a stub `AsyncLocalizationProvider`
+- **Only English is shown**: browser-only Theia binds a stub `AsyncLocalizationProvider`
   that always resolves `en`. This package only guarantees every string is localizable; an actual
   non-English UI is separate, app-wide work.
 
-## Known limits
+### What will surprise you
 
 - **Non-atomic cross-mount moves.** A move across mounts is copy-then-remove inside the composite
   file system, not a single operation; a failure partway through can leave a copy at the
   destination while the source still exists.
 - **Only the explorer accepts a panel drag.** Other Theia file trees (the file-open dialog, the
-  editor breadcrumb's folder popup) are not extended; dropping a panel row onto one does nothing,
-  as today.
+  editor breadcrumb's folder popup) are not extended; dropping a panel row onto one does nothing.
 - **A mount that cannot be reached is read-only.** A mount that failed, is locked or awaits
   access is an empty read-only placeholder in the mount table; a panel lists it (empty) and every
   write into it fails, reported as for any failed transfer — the same as for the explorer.
+- **Notices are literal.** A folder that vanished shows
+  `“<folder>” no longer exists — showing “<ancestor>”`; one that cannot be
+  read shows `“<folder>” is not available: <reason>` with *Retry*; a drop of a
+  folder into itself is refused with `Cannot put “<name>” inside itself`; a
+  partly failed batch reports `<n> of <total> items failed`.
 
-## Red / green
+### Parameter decorators are enabled for two widgets
 
-| Task | Red | Green |
-|---|---|---|
-| 1 messages, formatting | 0 | 9 |
-| 2 sorting | 6 | 6 |
-| 3 transfer planning | 18 | 18 |
-| 4 breadcrumb model | 7 | 7 |
-| 5 transfer runner | 3 | 3 |
-| 6 the panel (e2e `file-panels.spec.ts`) | 3 failed | 4 passed |
-| 7 breadcrumb sibling dropdowns (e2e `file-panels.spec.ts`) | 3 failed, 4 passed | 7 passed |
-| 8 context menu, Open in Files Panel (e2e `file-panels.spec.ts`) | 2 failed, 7 passed | 9 passed |
-| 9 drops into panels: dialog, service, drag source, uploads (e2e `file-panels.spec.ts`) | 8 failed, 9 passed | 17 passed |
-| 10 the explorer accepts panel drags (e2e `file-panels.spec.ts`) | 1 failed, 1 passed (new tests only) | 19 passed |
-| 11 Copy / Move to Other Panel (e2e `file-panels.spec.ts`) | 1 failed, 19 passed | 20 passed |
-| 12 restore after reload; vanished folders (e2e `file-panels.spec.ts`) | 2 failed, 20 passed | 22 passed |
-| final-review fixes (unit) | 3 failed, 44 passed | 47 passed |
-| final-review fixes (e2e `file-panels.spec.ts`, new and changed tests) | 8 failed, 3 passed | 11 passed; whole file 30 passed |
-| mounts as workspace roots (unit `breadcrumb-model`: Go Up and fallback stop at a root) | new functions, not yet exported | 53 passed |
-| mounts as workspace roots (e2e `file-panels.spec.ts`) | on the merged tree 28 failed, 2 passed; tests adapted, product unchanged: 3 failed (Go Up / Backspace above a root, removed mount) | whole file 32 passed |
-| a panel never restores outside the roots (unit `outsideRoots`; e2e stored layout at `file:///`) | unit 2 failed; e2e 1 failed (panel at `/`) | unit 55 passed; e2e 33 passed |
-
-## Notes
-
-- `biome.json`'s `javascript.parser.unsafeParameterDecoratorsEnabled` (in `apps/theia-shell`,
-  repo-wide) is needed for `FilePanelTreeWidget` and `PanelAwareNavigatorWidget`, whose
+- The root `biome.json`'s `javascript.parser.unsafeParameterDecoratorsEnabled` (repo-wide) is needed for `FilePanelTreeWidget` and `PanelAwareNavigatorWidget`, whose
   constructors take `@inject(...)` parameters — not property injection like the rest of this
   package — because each must forward them to `super(props, model, contextMenuRenderer)`, exactly
   like the Theia classes they extend.
+
+### Dependencies
+
+`@theia/core`, `@theia/filesystem` (the file tree it extends),
+`@theia/navigator` (the explorer it extends) and `@theia/workspace` (the
+roots). No storage of its own: every read and write goes through Theia's
+`FileService`.
+
+## License
+
+No license is declared: there is no LICENSE file and no `license` field in
+`package.json`.

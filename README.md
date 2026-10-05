@@ -1,97 +1,179 @@
-# theia-shell
+# statewalker-shell-theia
 
-An Eclipse Theia 1.76 application that runs **only in the browser**. It has a
-file explorer over a `@statewalker/webrun-files` `FilesApi`, a Monaco editor
-that saves back to it, a Markdown extension contributing commands, menus,
-keybindings and views, and separate image and PDF viewer extensions (the PDF
-viewer uses EmbedPDF). Its look is stock Theia or, with one switch, shadcn/ui applied with Tailwind.
+## What it is
 
-It is also a member of an **httpeers mesh**: it joins from an invitation,
-shows the peers and what they serve, lets an admin invite others, chats with
-the mesh's LLM service, and exposes outside origins to the mesh through a
-proxy. It is the HTTPeers shell taking shape: a Theia host for mesh apps and
-components installed at runtime.
+An Eclipse Theia 1.76 application that runs only in the browser. The build
+output is static files and there is no backend. Files come from
+`@statewalker/webrun-files` `FilesApi` instances (browser storage, memory,
+folders on the computer, S3 buckets), each mounted as a top-level folder of the
+explorer. Secrets such as S3 keys live in a password-protected vault encrypted
+with WebCrypto. The app has a Markdown editor with a live preview and an
+outline, an image viewer and a PDF viewer. It is also a member of an httpeers
+mesh: it joins from an invitation, shows the peers and what they serve, lets an
+admin invite others, chats with the mesh's LLM service, and exposes outside
+HTTP origins to the mesh through a proxy.
 
-**Start with [`app/README.md`](app/README.md)** for running it and for how to
-provide a `FilesApi`. [`PLAN.md`](PLAN.md) is the plan this followed:
-prototypes first, then the app, red/green TDD throughout.
+The workspace holds the app, the Theia extensions it is made of, and seven
+small prototype apps. Each prototype pins down one property of browser-only
+Theia. Nothing is published: every package is private and named
+`@theia-shell/*`. [`app/README.md`](app/README.md) is the user-level guide to
+the app.
 
-This is a self-contained pnpm workspace, excluded from the sandbox root
-workspace. Theia needs a hoisted `node_modules` and brings a large dependency
-tree of its own.
-
-```bash
-(cd ../../../httpeers && pnpm install && pnpm -r build)   # the mesh packages, linked from a sibling checkout
-pnpm install
-pnpm build          # every package, prototype and the app
-pnpm test           # unit tests (vitest)
-pnpm test:e2e       # Playwright, per prototype and app, against the static builds
-node tools/mesh-stack.mjs http://127.0.0.1:3000/   # a whole mesh on loopback, with invitations for the app
-```
-
-The httpeers packages are not on npm yet, so the mesh extensions depend on
-them with `link:` to `../httpeers` beside `statewalker-sandbox`.
-
-## Layout
+## The workspace is one app, its extensions, and prototypes
 
 ```
-PLAN.md                     the plan: questions, prototypes, the app
-tools/serve.mjs             a plain static file server (all a browser-only app needs)
-tools/playwright.base.mjs   shared e2e config: serve <app>/lib/frontend, drive Chromium
-tools/probe.mjs             debugging aid: load a served app, print console errors and DOM ids, screenshot
-tools/mesh-stack.mjs        a whole httpeers mesh on loopback: relay, hub daemon, fake LiteLLM, an outside origin
-protos/p1…p7                one question each; README = question, answer, red/green log
-packages/theia-files-api    FilesApi → Theia file system (extension)
-packages/theia-markdown     the Markdown extension
-packages/theia-image-viewer the image viewer extension
-packages/theia-pdf-viewer   the PDF viewer extension (EmbedPDF)
-packages/theia-shadcn       shadcn/ui components, tokens and the alignment of Theia's own widgets
-packages/theia-files-mounts mount points over a main storage; settings under shell-system:
-packages/theia-secret-vault the encrypted secret vault behind Theia's KeyStoreService
-packages/theia-files-s3     the S3 mount type
-packages/theia-file-panels  Midnight-Commander-style file panels (extension)
-packages/theia-httpeers     this browser as a mesh member: Mesh view, peers, invitations, MeshContribution
-packages/theia-httpeers-proxy  expose outside origins to the mesh; call other members' proxies
-packages/theia-llm-chat     the LLM chat: the mesh hub's LLM service or any OpenAI-compatible endpoint
-app/                        the application, app/files (its defaults and seed), app/style (its Tailwind build), e2e tests
-tools/rustfs.mjs            test fixture: RustFS (S3) in Docker, with CORS for the app
-tools/mesh-stack.mjs        test fixture: a whole mesh on loopback (relay, hub, fake LiteLLM, an outside origin)
+app/                          the browser-only Theia application, its e2e tests (app/tests)
+app/files                     the app's file-system defaults and demo files (an extension)
+app/style                     the app's Tailwind build (an extension)
+packages/theia-files-api      a FilesApi as Theia's file system
+packages/theia-files-mounts   mount points over a main storage; settings under shell-system:
+packages/theia-files-s3       the S3 mount type
+packages/theia-secret-vault   the encrypted vault behind Theia's KeyStoreService
+packages/theia-file-panels    Midnight-Commander-style file panels
+packages/theia-markdown       Markdown commands, preview and outline
+packages/theia-image-viewer   a zoomable image viewer
+packages/theia-pdf-viewer     a PDF viewer (EmbedPDF, no network access)
+packages/theia-shadcn         shadcn/ui components and tokens; an opt-in shadcn look for Theia's widgets
+packages/theia-httpeers       this browser as an httpeers mesh member
+packages/theia-httpeers-proxy outside HTTP origins exposed to the mesh
+packages/theia-llm-chat       a chat with the mesh's LLM or any OpenAI-compatible endpoint
+protos/p1…p7                  one prototype app per question; each README states the question and the answer
+tools/                        a static file server, the shared Playwright config, test fixtures
+docs/specs, docs/plans        design documents
 ```
 
-## Mounts and secrets
+| Package | What it is |
+|---|---|
+| [`@theia-shell/app`](app) | The application (`"theia": { "target": "browser-only" }`) |
+| [`@theia-shell/app-files`](app/files) | The Temporary mount, hidden paths and demo files seeded into the main storage |
+| [`@theia-shell/app-style`](app/style) | Tailwind v4 without preflight over the extensions' sources, plus the shadcn theme |
+| [`@theia-shell/theia-files-api`](packages/theia-files-api) | Serves a `FilesApi` as the `file:` file system and opens its root as the workspace |
+| [`@theia-shell/theia-files-mounts`](packages/theia-files-mounts) | A composite, filterable `FilesApi` of user-defined mount points over a main storage |
+| [`@theia-shell/theia-files-s3`](packages/theia-files-s3) | The S3 mount type |
+| [`@theia-shell/theia-secret-vault`](packages/theia-secret-vault) | A WebCrypto vault behind Theia's `KeyStoreService` |
+| [`@theia-shell/theia-file-panels`](packages/theia-file-panels) | One-folder file panels with sibling-folder breadcrumbs and copy/move |
+| [`@theia-shell/theia-markdown`](packages/theia-markdown) | Markdown commands, menus, keybindings, preview and outline |
+| [`@theia-shell/theia-image-viewer`](packages/theia-image-viewer) | PNG, JPEG, GIF, WebP, AVIF, BMP, ICO and SVG in a zoomable viewer |
+| [`@theia-shell/theia-pdf-viewer`](packages/theia-pdf-viewer) | `.pdf` in EmbedPDF (PDFium in WebAssembly), with no network access |
+| [`@theia-shell/theia-shadcn`](packages/theia-shadcn) | shadcn/ui components on Theia's React, tokens per theme, an opt-in shadcn style |
+| [`@theia-shell/theia-httpeers`](packages/theia-httpeers) | Mesh membership: join, peers, invitations, `MeshContribution` |
+| [`@theia-shell/theia-httpeers-proxy`](packages/theia-httpeers-proxy) | A route table that exposes outside origins to the mesh, with a test console |
+| [`@theia-shell/theia-llm-chat`](packages/theia-llm-chat) | An LLM chat over the mesh hub's service or an OpenAI-compatible API |
 
-The app's file system is a set of **mount points** — browser storage, memory,
-folders on the computer, S3 buckets — each a `@statewalker/webrun-files`
-`FilesApi` shown as a top-level folder, over a main storage that holds the
-settings and a password-protected, WebCrypto-encrypted vault for secrets. See
-[`app/README.md`](app/README.md), the
-[design](docs/specs/2026-09-25-pluggable-files-api-design.md) and the
-[plan](docs/plans/2026-09-25-pluggable-files-api.md).
+## How to run it
 
-## What the prototypes established
+You need Node 24 and pnpm 10 (`packageManager` is `pnpm@10.16.1`; corepack
+provides it). Run everything from the repository root.
 
-| # | Question | Answer |
-|---|---|---|
-| [P1](protos/p1-browser-only) | Does a browser-only Theia app build and run from static files? | Yes. Core alone fails DI; the minimum is core, editor, filesystem, messages, monaco, navigator, preferences and workspace. esbuild builds it in about 3 s. `bundle.js` is 24 MB in development mode. |
-| [P2](protos/p2-files-api-provider) | `FilesApi` → `FileSystemProvider`? | Yes, whole-file read/write plus folder copy, with 21 unit tests. Theia's `const enum`s are `undefined` at runtime under esbuild/vitest. |
-| [P3](protos/p3-explorer) | How is the provider swapped in, and a workspace opened, without a backend? | Rebind `FileSystemProvider` and `WorkspaceServer`, and reveal the explorer. Theia ignores `theiaExtensions` in the app's own `package.json`. Turn off workspace trust. |
-| [P4](protos/p4-editor-save) | Monaco + Save through the adapter? | Works with no extra code. |
-| [P5](protos/p5-contributions) | Commands, keybindings, menus and views, browser-only? | Standard APIs, all work. |
-| [P6](protos/p6-vscode-extension) | VS Code web extensions, and **runtime deploy**? | Static web extensions run once `activationEvents` are explicit (a 1.76 gap). A 20-line `HostedPluginServer` subclass deploys plugins at runtime with no reload (browser-only never calls `setClient`). `@theia/plugin-ext` roughly doubles the frontend modules, and several of them fail without a backend. |
-| [P7](protos/p7-embedpdf) | Can EmbedPDF run inside Theia's bundle, offline, on `FilesApi` bytes? | Yes. PDFium's wasm is embedded through Theia's `dataurl` loader for `.wasm`; jsDelivr fonts, Google Fonts and the stamp manifest are switched off. The bundle grows by about 13 MB in development mode. |
-| [P8](PLAN.md#stage-2-the-mesh) | Can an httpeers member (libp2p, the ServiceWorker edge, the join widget) run inside Theia's bundle, and join a real mesh? | Yes, answered in the app against a mesh on loopback. esbuild bundles libp2p and Biscuit with no configuration. Two seams needed work: `webrun-http-browser` needs a real `import.meta.url` (patched in `esbuild.mjs`, fixed upstream), and the worker must be copied to `/sw.js`, not bundled. The whole app's development bundle is now 40 MB. |
+1. `corepack enable`
+2. `pnpm install`
+3. `pnpm build`: every package (`tsc`), every prototype and the app (`theia build`).
+4. `pnpm --filter @theia-shell/app start`: serves `app/lib/frontend` on
+   http://127.0.0.1:3000.
+5. Optional, for a mesh on this machine:
+   `node tools/mesh-stack.mjs http://127.0.0.1:3000/`. It prints admin and
+   member invitations for the app. It needs a built httpeers source tree
+   (see *What will surprise you*).
 
-## Next, toward the HTTPeers shell
+`pnpm test` runs the unit tests (vitest). `pnpm test:e2e` runs the Playwright
+tests of every prototype and the app against their static builds, so build
+first.
 
-- **Mesh apps as Theia widgets.** A peer's `kind: "app"` advert opened in a
-  session origin (`*.p.httpeers.net`, `openSession` from
-  `httpeers-session-shell`) inside a widget, never on the shell's origin
-  (security model §6.2, §11).
-- **A `FilesApi` served by a peer**, mounted as a second workspace root.
-- **Publish the httpeers packages**, so the `link:` to a sibling checkout goes.
-- **A runtime installer** (building on P6): serve plugin files from a
-  `FilesApi` or a mesh peer through a Service Worker (`webrun-http-browser`),
-  keep the installed list in IndexedDB, and gate installation on signed
-  metadata and user consent (security model §6.1).
-- **Trim `@theia/plugin-ext`'s** backend-only modules for browser-only
-  deployments.
+## Why it is the way it is
+
+### A static file server is all the app needs
+
+The app is `"target": "browser-only"`. Everything a backend would do runs in
+the page: the file system is a `FilesApi`, the settings live in the main
+storage, search walks the workspace through Theia's `FileService`.
+`tools/serve.mjs` is a plain static server, and the e2e tests use it too.
+
+### Every app-level binding lives in its own extension package
+
+Theia ignores `theiaExtensions` in the application's own `package.json`. So
+the app's defaults are `app/files` and its stylesheet is `app/style`. Each is a
+package with its own `theiaExtensions` entry, listed in the app's
+dependencies. A new kind of mount, or any other binding, goes in a package the
+same way.
+
+### Theia needs a hoisted node_modules
+
+`.npmrc` sets `node-linker=hoisted`, because Theia's build resolves modules
+the way npm lays them out.
+
+### Decorators are on for Theia's dependency injection
+
+`tsconfig.theia.json`, which the packages extend, turns on
+`experimentalDecorators` and `emitDecoratorMetadata` for inversify. Biome's
+`unsafeParameterDecoratorsEnabled` (in `biome.json`) is on for the same
+reason: some widgets take `@inject(...)` constructor parameters, because they
+must pass them on to the Theia classes they extend.
+
+### The prototypes hold the properties the app relies on
+
+Each prototype under `protos/` is a small app with its own e2e tests:
+
+| Prototype | Property |
+|---|---|
+| [P1](protos/p1-browser-only) | A browser-only app builds and runs from static files. The minimum is core, editor, filesystem, messages, monaco, navigator, preferences and workspace; core alone fails dependency injection. |
+| [P2](protos/p2-files-api-provider) | Theia's `FileSystemProvider` can be implemented over a `FilesApi`. Theia's `const enum`s are `undefined` at runtime under esbuild and vitest, so the adapter defines its own values. |
+| [P3](protos/p3-explorer) | The provider is swapped in by rebinding `FileSystemProvider` and `WorkspaceServer`. Workspace trust is off (`security.workspace.trust.enabled: false` in the app's `package.json`). |
+| [P4](protos/p4-editor-save) | Monaco and *Save* work through the adapter with no extra code. |
+| [P5](protos/p5-contributions) | Commands, keybindings, menus and views work with the standard APIs. |
+| [P6](protos/p6-vscode-extension) | Static VS Code web extensions run once `activationEvents` are explicit, and a small `HostedPluginServer` subclass deploys plugins at runtime. `@theia/plugin-ext` roughly doubles the frontend modules, and the app does not include it. |
+| [P7](protos/p7-embedpdf) | EmbedPDF runs inside Theia's bundle with no network access: PDFium's wasm is embedded as a data URL. |
+
+## What will surprise you
+
+- **`tools/mesh-stack.mjs` and `app/tests/mesh.spec.ts` need httpeers' source
+  tree.** They start the relay and the hub daemon from a built checkout at
+  `$HTTPEERS_DIR` (default: `../httpeers` next to this repository). Without
+  it they fail with
+  `mesh-stack: <path> is missing; build httpeers first (pnpm -r build)`.
+- **S3 tests skip themselves without Docker.** The S3 and restore e2e tests and
+  one unit test of `theia-files-s3` run against RustFS in Docker
+  (`tools/rustfs.mjs`). With no Docker they are skipped, not failed.
+- **`app/style`'s tests read the compiled CSS.** Run its `build` first, or they
+  fail with `ENOENT` on `lib/app.css`.
+- **The app's bundle rewrites `import.meta.url` in `@statewalker/webrun-http-browser`.**
+  Theia bundles the frontend as a classic script, where `import.meta` is an
+  empty object. Without the rewrite in `app/esbuild.mjs` the mesh edge throws
+  `Invalid URL` and never starts.
+- **The ServiceWorker must be at `/sw.js`.** The app's build copies it there.
+  The app must be served from the origin root, over https or from localhost,
+  or the mesh edge cannot register.
+- **`pnpm typecheck` checks nothing.** No package defines a `typecheck`
+  script; types are checked by each package's `tsc` build.
+- **The e2e tests use port 3100 by default.** Set `E2E_PORT` to run suites
+  from two checkouts side by side.
+
+## Reference
+
+### Commands
+
+| Command | What it does |
+|---|---|
+| `pnpm build` | `pnpm -r run build` |
+| `pnpm test` | `pnpm -r run test` (vitest) |
+| `pnpm test:e2e` | `pnpm -r run test:e2e` (Playwright) |
+| `pnpm lint` / `pnpm lint:check` | Biome check, with or without writing fixes |
+| `pnpm format` / `pnpm format:check` | Biome format, with or without writing |
+| `pnpm --filter <name> build` / `test` | One package |
+| `pnpm --filter @theia-shell/app build:prod` | The app in production mode |
+| `node tools/serve.mjs <dir> <port>` | Serve a built app |
+| `node tools/probe.mjs <url> [ms] [png]` | Load a served app; print console errors and element ids; optionally take a screenshot |
+| `node tools/mesh-stack.mjs [appUrl]` | A mesh on loopback: relay, hub with its `llm` service, a fake LiteLLM, an outside origin |
+
+### Continuous integration
+
+`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests: a
+frozen install, `lint:check`, `format:check`, `build`, `typecheck` and `test`.
+The e2e tests are not part of it.
+
+### Releases
+
+None. Every package is private.
+
+### License
+
+No license is declared: there is no LICENSE file and no `license` field.
