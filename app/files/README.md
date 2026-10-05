@@ -1,26 +1,75 @@
 # @theia-shell/app-files
 
-The app's file-system defaults, as a Theia extension of their own (Theia
-ignores `theiaExtensions` in the application's own `package.json`, see P3).
-A private package of this workspace, not published.
+## What it is
 
-`theiaExtensions`: `frontendOnly` → `lib/app-files-frontend-module`. The module:
+The app's file-system defaults, as a Theia extension: an extra in-memory
+mount, the hidden paths, the demo files seeded into an empty main storage, and
+the folder *New Markdown File* writes to. A private package of this workspace,
+not published.
 
-- rebinds `MountDefaults` (from `theia-files-mounts`): one extra mount,
-  *Temporary* (key `temp`, in memory), and the hidden paths `**/.git`,
-  `**/.git/**` and `**/.DS_Store`;
-- binds a `MainStorageInitializer` that seeds an empty main storage with the
-  demo files (`src/seed.ts`): `welcome.md`, `notes/ideas.md`,
-  `docs/cheatsheet.md`, `docs/sample.pdf`, `media/gradient.png` and
-  `media/logo.svg`. The PNG is encoded in code (`src/png.ts`) and the PDF is
-  made with `createTextPdf` from `theia-pdf-viewer`, so no binary fixtures are
-  checked in;
-- rebinds `FilesApiRootLabel` (from `theia-files-api`) to `Files`;
-- binds `MarkdownNewFileFolder` (from `theia-markdown`) to the main storage,
-  because the root above the mounts is read-only;
-- puts `window.theiaShell = { filesApi, bootGate }` on the page for the e2e
-  tests and the devtools console.
+## Why it exists
 
-Build and test it with `pnpm --filter @theia-shell/app-files build` and
-`pnpm --filter @theia-shell/app-files test` (8 unit tests: seeding, the PNG
-encoder).
+The extensions leave these choices to the app: `theia-files-mounts` reads its
+defaults from `MountDefaults`, and `theia-markdown` asks `MarkdownNewFileFolder`
+where to create files. Theia ignores `theiaExtensions` in the application's own
+`package.json`, so the app's bindings need a package of their own.
+
+## How to use
+
+- `theiaExtensions`: `frontendOnly` → `lib/app-files-frontend-module` (also
+  `main`).
+- The app lists it in its dependencies (`"@theia-shell/app-files": "workspace:^"`).
+- Build and test: `pnpm --filter @theia-shell/app-files build` and
+  `pnpm --filter @theia-shell/app-files test` (8 unit tests: seeding, the PNG
+  encoder).
+
+## Examples
+
+The bindings it makes, from `src/app-files-frontend-module.ts`:
+
+```ts
+rebind(MountDefaults).toConstantValue({
+  mounts: [{ key: "temp", name: "Temporary", type: "memory", config: {} }],
+  hidden: ["**/.git", "**/.git/**", "**/.DS_Store"],
+});
+bind(MainStorageInitializer).toConstantValue(async ({ files }: { files: FilesApi }) => {
+  await seedIfEmpty(files, SEED);
+});
+rebind(FilesApiRootLabel).toConstantValue("Files");
+bind(MarkdownNewFileFolder).toDynamicValue(({ container }) => async () => {
+  const main = await container.get(MainStorageService).open();
+  return new URI(`file:///${main.storage.key}`);
+});
+```
+
+## Internals
+
+### New Markdown files go to the main storage
+
+The root above the mounts is read-only, so the first workspace root (the
+default for *New Markdown File*) is not writable. `MarkdownNewFileFolder`
+points at the main storage instead.
+
+### The demo files have no binary fixtures
+
+`src/seed.ts` holds `welcome.md`, `notes/ideas.md`, `docs/cheatsheet.md`,
+`docs/sample.pdf`, `media/gradient.png` and `media/logo.svg`. The PNG is
+encoded in code (`src/png.ts`) and the PDF is made with `createTextPdf` from
+`theia-pdf-viewer`. `seedIfEmpty` writes them only into an empty main storage;
+the system folder `.shell` does not count as content.
+
+### The page exposes the file system for tests
+
+`window.theiaShell = { filesApi, bootGate }` is set on start, for the e2e tests
+and the devtools console.
+
+### Dependencies
+
+`@theia/core`, `@statewalker/webrun-files` and `@statewalker/webrun-files-mem`,
+and the workspace extensions whose keys it binds: `theia-files-api`,
+`theia-files-mounts`, `theia-markdown` and `theia-pdf-viewer`.
+
+## License
+
+No license is declared: there is no LICENSE file and no `license` field in
+`package.json`.
