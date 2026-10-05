@@ -1,4 +1,5 @@
 import { ReactWidget } from "@theia/core/lib/browser/widgets/react-widget";
+import DOMPurify from "@theia/core/shared/dompurify";
 import { inject, injectable, postConstruct } from "@theia/core/shared/inversify";
 import * as React from "@theia/core/shared/react";
 import { renderMarkdown } from "@theia-shell/theia-markdown/lib/common/markdown-render";
@@ -363,8 +364,8 @@ export class ChatWidget extends ReactWidget {
         <div
           key={index}
           className={`${className} markdown-preview`}
-          // renderMarkdown escapes raw HTML and sanitizes the result with DOMPurify.
-          dangerouslySetInnerHTML={{ __html: renderMarkdown(message.content) }}
+          // markdown-it escapes raw HTML; DOMPurify is the second fence, as in the preview.
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderMarkdown(message.content)) }}
         />
       );
     }
