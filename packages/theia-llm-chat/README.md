@@ -94,12 +94,12 @@ Conversations are kept in IndexedDB, in the `llm-chat` database. The endpoint,
 key and models are kept per source, in the profiles `theia-mesh` and
 `theia-custom`, so switching back and forth keeps both.
 
-### Replies are escaped Markdown, without DOMPurify
+### Replies are escaped Markdown, then sanitized
 
-Replies are rendered with `theia-markdown`'s `renderMarkdown` (markdown-it
-with `html: false`): raw HTML in a reply is escaped and `javascript:` links
-are refused. Unlike the Markdown preview, the chat does not also pass the
-result through DOMPurify.
+A reply is model output, so it is treated as data. It is rendered with `theia-markdown`'s
+`renderMarkdown` (markdown-it with `html: false`): raw HTML in a reply is escaped and
+`javascript:` links are refused. The resulting HTML then goes through DOMPurify, as in the
+Markdown preview, so a gap in either layer alone does not put script on the page.
 
 ### Dependencies
 
