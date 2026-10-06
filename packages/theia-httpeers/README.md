@@ -34,7 +34,7 @@ through its `theiaExtensions` entry: `frontendOnly` →
 | `MeshService` | The app's one `PeerSession` (`createSession` from `@statewalker/httpeers-member/browser`), started with the app so a `?join=` link works on first load. It re-publishes session changes and the mesh view as Theia events, and drops a spent `?join=` from the address bar. |
 | View *Mesh* (left side bar) | The join widget from `@statewalker/httpeers-join`: paste or scan an invitation, the hub link, disconnect, reconnect, leave, and for an admin the *Invite someone* panel. Below it, the peers: this browser, the hub, then the members, with roles, online state, the connection kind and what each advertises. |
 | Status bar | `Mesh: live (direct)`, `Mesh: not joined`, …; clicking it toggles the view. |
-| Commands | *Mesh: Join a Mesh…*, *Invite to the Mesh…* (copies the link), *Disconnect*, *Reconnect*, *Leave the Mesh (Reset Identity)…*, *Copy This Browser's Peer Id*; also under *File → Mesh ▸* |
+| Commands | *Mesh: Join a Mesh…*, *Invite to the Mesh…* (copies the link), *Disconnect*, *Reconnect*, *Leave the Mesh (Reset Identity)…*, *Copy This Browser's Peer Id*; also in the top-level *Mesh* menu |
 | `MeshContribution` | What another extension serves from this browser |
 
 Build and test: `pnpm --filter @theia-shell/theia-httpeers build` and

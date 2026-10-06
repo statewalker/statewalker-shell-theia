@@ -6,14 +6,13 @@ import {
   LEAVE_CONFIRMATION,
 } from "@statewalker/httpeers-join";
 import { ClipboardService } from "@theia/core/lib/browser/clipboard-service";
-import { CommonMenus } from "@theia/core/lib/browser/common-menus";
 import { ConfirmDialog } from "@theia/core/lib/browser/dialogs";
 import type { FrontendApplicationContribution } from "@theia/core/lib/browser/frontend-application-contribution";
 import { QuickInputService } from "@theia/core/lib/browser/quick-input";
 import { AbstractViewContribution } from "@theia/core/lib/browser/shell/view-contribution";
 import { StatusBar, StatusBarAlignment } from "@theia/core/lib/browser/status-bar/status-bar";
 import type { Command, CommandRegistry } from "@theia/core/lib/common/command";
-import type { MenuModelRegistry } from "@theia/core/lib/common/menu";
+import { MAIN_MENU_BAR, type MenuModelRegistry } from "@theia/core/lib/common/menu";
 import { MessageService } from "@theia/core/lib/common/message-service";
 import { inject, injectable } from "@theia/core/shared/inversify";
 import { statusBarText } from "../common/mesh-model";
@@ -127,7 +126,8 @@ export class MeshContributionImpl
 
   override registerMenus(menus: MenuModelRegistry): void {
     super.registerMenus(menus);
-    const mesh = [...CommonMenus.FILE, "4_httpeers"];
+    // A top-level menu: the mesh is a whole subsystem, not a kind of file.
+    const mesh = [...MAIN_MENU_BAR, "7_mesh"];
     menus.registerSubmenu(mesh, "Mesh");
     menus.registerMenuAction(mesh, { commandId: MeshCommands.JOIN.id, order: "a" });
     menus.registerMenuAction(mesh, { commandId: MeshCommands.INVITE.id, order: "b" });
