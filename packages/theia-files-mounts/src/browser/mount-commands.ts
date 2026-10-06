@@ -207,7 +207,7 @@ export class MountCommandContribution implements CommandContribution, MenuContri
     preset: { name?: string; config?: Record<string, string> } = {},
   ): Promise<void> {
     const type = this.mounts.types().get(typeId);
-    if (!type) return;
+    if (!type || !(await this.unlockFor(type))) return;
     let name = preset.name;
     let config = { ...(preset.config ?? {}) };
     if (type.configure) {
@@ -243,14 +243,30 @@ export class MountCommandContribution implements CommandContribution, MenuContri
     if (result) await this.save(type, result, mount.key);
   }
 
+  /**
+   * A new mount of a type with secret fields needs the vault: it is unlocked
+   * before the form opens, so that what the user types is never thrown away
+   * for a locked vault. An edit asks only on save, and only if it writes secrets.
+   */
+  protected async unlockFor(type: MountType): Promise<boolean> {
+    if (!type.fields.some((f) => f.kind === "secret")) return true;
+    if (await this.vaultUi.ensureUnlocked()) return true;
+    this.messages.warn(`Secrets are locked: unlock them to set up a ${type.label} mount.`);
+    return false;
+  }
+
   protected async save(
     type: MountType,
     result: MountFormResult,
     previousKey?: string,
   ): Promise<void> {
-    const hasSecrets =
-      Object.keys(result.secrets).length > 0 || type.fields.some((f) => f.kind === "secret");
-    if (hasSecrets && !(await this.vaultUi.ensureUnlocked())) {
+    // The vault is written when secrets were typed, or moved when the mount path changed.
+    const writesSecrets =
+      Object.keys(result.secrets).length > 0 ||
+      (previousKey !== undefined &&
+        previousKey !== result.key &&
+        type.fields.some((f) => f.kind === "secret"));
+    if (writesSecrets && !(await this.vaultUi.ensureUnlocked())) {
       this.messages.warn(
         "Secrets are locked, so the mount was not saved. Run “Secrets: Unlock” and try again.",
       );
