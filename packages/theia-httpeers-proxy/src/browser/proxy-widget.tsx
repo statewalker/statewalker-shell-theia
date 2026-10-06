@@ -1,4 +1,5 @@
 import { shortPeerId } from "@statewalker/httpeers-join";
+import { ConfirmDialog } from "@theia/core/lib/browser/dialogs";
 import { ReactWidget } from "@theia/core/lib/browser/widgets/react-widget";
 import { inject, injectable, postConstruct } from "@theia/core/shared/inversify";
 import * as React from "@theia/core/shared/react";
@@ -73,6 +74,22 @@ export class ProxyWidget extends ReactWidget {
       });
       this.status = `Added ${prefix.trim()}.`;
       this.draft = { ...EMPTY };
+    } catch (error) {
+      this.status = error instanceof Error ? error.message : String(error);
+    }
+    this.update();
+  }
+
+  protected async remove(prefix: string): Promise<void> {
+    const ok = await new ConfirmDialog({
+      title: `Remove the route ${prefix}?`,
+      msg: "Other members can no longer reach it, and its credential value is forgotten.",
+      ok: "Remove",
+    }).open();
+    if (!ok) return;
+    try {
+      await this.proxy.table.remove(prefix);
+      this.status = `Removed ${prefix}.`;
     } catch (error) {
       this.status = error instanceof Error ? error.message : String(error);
     }
@@ -167,7 +184,7 @@ export class ProxyWidget extends ReactWidget {
                     <button
                       type="button"
                       className="theia-button secondary"
-                      onClick={() => void this.proxy.table.remove(route.prefix)}
+                      onClick={() => void this.remove(route.prefix)}
                     >
                       Remove
                     </button>
