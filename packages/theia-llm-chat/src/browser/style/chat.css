@@ -71,6 +71,10 @@
   flex-direction: column;
   gap: 8px;
 }
+/* A one-line status is running text: as a flex column, its <b> would be a line of its own. */
+p.llm-chat-setup {
+  display: block;
+}
 .llm-chat-setup label {
   display: flex;
   flex-direction: column;
