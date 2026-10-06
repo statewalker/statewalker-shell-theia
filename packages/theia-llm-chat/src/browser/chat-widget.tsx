@@ -1,3 +1,4 @@
+import { ConfirmDialog } from "@theia/core/lib/browser/dialogs";
 import { ReactWidget } from "@theia/core/lib/browser/widgets/react-widget";
 import DOMPurify from "@theia/core/shared/dompurify";
 import { inject, injectable, postConstruct } from "@theia/core/shared/inversify";
@@ -24,7 +25,8 @@ export class ChatWidget extends ReactWidget {
 
   protected draft = "";
   protected keyDraft = "";
-  protected endpointDraft = { baseUrl: "", apiKey: "" };
+  /** `baseUrl` stays undefined until edited: the stored URL is shown and submitted until then. */
+  protected endpointDraft: { baseUrl?: string; apiKey: string } = { apiKey: "" };
   protected threadEnd: HTMLDivElement | null = null;
 
   @postConstruct()
@@ -64,6 +66,15 @@ export class ChatWidget extends ReactWidget {
     this.update();
   }
 
+  protected async deleteChat(id: string, title: string): Promise<void> {
+    const ok = await new ConfirmDialog({
+      title: `Delete “${title}”?`,
+      msg: "The conversation is deleted from this browser and cannot be restored.",
+      ok: "Delete",
+    }).open();
+    if (ok) await this.chat.deleteChat(id);
+  }
+
   protected render(): React.ReactNode {
     const { source, stage } = this.chat.setup.state();
     return (
@@ -92,7 +103,7 @@ export class ChatWidget extends ReactWidget {
                   className="llm-chat-delete codicon codicon-trash"
                   title="Delete this chat"
                   aria-label={`Delete ${summary.title}`}
-                  onClick={() => void this.chat.deleteChat(summary.id)}
+                  onClick={() => void this.deleteChat(summary.id, summary.title)}
                 />
               </li>
             ))}
@@ -228,7 +239,8 @@ export class ChatWidget extends ReactWidget {
             aria-label="Endpoint settings"
             onSubmit={(e) => {
               e.preventDefault();
-              void this.chat.setup.submitEndpoint(this.endpointDraft);
+              const { baseUrl = stage.baseUrl, apiKey } = this.endpointDraft;
+              void this.chat.setup.submitEndpoint({ baseUrl, apiKey });
             }}
           >
             <p>Any OpenAI-compatible API: its base URL (ending in /v1) and a key.</p>
@@ -237,7 +249,7 @@ export class ChatWidget extends ReactWidget {
               <input
                 className="theia-input"
                 placeholder="https://api.openai.com/v1"
-                value={this.endpointDraft.baseUrl || stage.baseUrl}
+                value={this.endpointDraft.baseUrl ?? stage.baseUrl}
                 onChange={(e) => {
                   this.endpointDraft = { ...this.endpointDraft, baseUrl: e.target.value };
                   this.update();
