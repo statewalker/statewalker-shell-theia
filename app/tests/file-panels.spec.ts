@@ -746,7 +746,7 @@ test.describe("labels and returning to a folder after a mount recovers", () => {
       timeout: 30_000,
     });
     await expect(row(b, "notes.md")).toBeVisible();
-    await expect(page.getByText(/locked/)).toHaveCount(0);
+    await expect(page.getByText(/\blocked\b/)).toHaveCount(0);
     await expect(page.getByText(/no longer exists/)).toHaveCount(0);
   });
 });

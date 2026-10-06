@@ -1,6 +1,9 @@
+import { CommonMenus } from "@theia/core/lib/browser/common-menus";
 import { ConfirmDialog } from "@theia/core/lib/browser/dialogs";
 import type { FrontendApplicationContribution } from "@theia/core/lib/browser/frontend-application-contribution";
+import { StatusBar, StatusBarAlignment } from "@theia/core/lib/browser/status-bar/status-bar";
 import type { Command, CommandContribution, CommandRegistry } from "@theia/core/lib/common/command";
+import type { MenuContribution, MenuModelRegistry } from "@theia/core/lib/common/menu";
 import { MessageService } from "@theia/core/lib/common/message-service";
 import { inject, injectable } from "@theia/core/shared/inversify";
 import { WrongPasswordError } from "../common/secret-vault";
@@ -24,11 +27,21 @@ export namespace VaultCommands {
   export const RESET: Command = { id: "secrets.reset", category, label: "Reset Vault" };
 }
 
-/** The vault's UI: the unlock-or-create prompt at start, and the commands. */
+const STATUS_ID = "secrets-vault";
+/** *File → Secrets*, next to the other storage commands. */
+const SECRETS_MENU = [...CommonMenus.FILE_OPEN, "z_secrets"];
+
+/**
+ * The vault's UI: the unlock-or-create prompt at start, the commands, the
+ * *File → Secrets* menu, and a status-bar lock that shows the state and toggles it.
+ */
 @injectable()
-export class VaultUi implements FrontendApplicationContribution, CommandContribution {
+export class VaultUi
+  implements FrontendApplicationContribution, CommandContribution, MenuContribution
+{
   @inject(VaultService) protected readonly vaults!: VaultService;
   @inject(MessageService) protected readonly messages!: MessageService;
+  @inject(StatusBar) protected readonly statusBar!: StatusBar;
 
   /**
    * The start-up prompt opens before the workbench restores its layout, so
@@ -40,6 +53,22 @@ export class VaultUi implements FrontendApplicationContribution, CommandContribu
     void this.ensureUnlocked(() => this.vaults.markStartupPrompt()).finally(() =>
       this.vaults.endStartupUnlock(),
     );
+    void this.vaults.vault().then((vault) => {
+      this.updateStatus(vault.unlocked);
+      vault.onDidChangeLock((unlocked) => this.updateStatus(unlocked));
+    });
+  }
+
+  protected updateStatus(unlocked: boolean): void {
+    void this.statusBar.setElement(STATUS_ID, {
+      text: unlocked ? "$(unlock) Secrets unlocked" : "$(lock) Secrets locked",
+      tooltip: unlocked
+        ? "Secrets (S3 keys, …) are unlocked. Click to lock them."
+        : "Secrets (S3 keys, …) are locked. Click to unlock them.",
+      alignment: StatusBarAlignment.LEFT,
+      priority: 49,
+      command: unlocked ? VaultCommands.LOCK.id : VaultCommands.UNLOCK.id,
+    });
   }
 
   /** Unlocks, asking when it must (`onPrompt` is told). Resolves false if the user skipped. */
@@ -108,6 +137,20 @@ export class VaultUi implements FrontendApplicationContribution, CommandContribu
     });
     commands.registerCommand(VaultCommands.FORGET, { execute: () => this.vaults.forget() });
     commands.registerCommand(VaultCommands.RESET, { execute: () => this.reset() });
+  }
+
+  registerMenus(menus: MenuModelRegistry): void {
+    menus.registerSubmenu(SECRETS_MENU, "Secrets", { sortString: "z3" });
+    const commands = [
+      VaultCommands.UNLOCK,
+      VaultCommands.LOCK,
+      VaultCommands.CHANGE_PASSWORD,
+      VaultCommands.FORGET,
+      VaultCommands.RESET,
+    ];
+    commands.forEach((command, i) => {
+      menus.registerMenuAction(SECRETS_MENU, { commandId: command.id, order: String(i) });
+    });
   }
 
   protected async reset(): Promise<void> {

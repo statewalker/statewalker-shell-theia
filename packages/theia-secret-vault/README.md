@@ -33,7 +33,9 @@ main storage's `/.shell`.
 
 Commands (category *Secrets*): *Unlock*, *Lock*, *Change Password* (re-wraps
 the data key only), *Forget Remembered Password*, *Reset Vault* (a new key;
-the secrets are lost; for a forgotten password).
+the secrets are lost; for a forgotten password). They are also under
+*File → Secrets ▸*. A status-bar item shows *Secrets locked* or *Secrets
+unlocked*; clicking it unlocks or locks.
 
 Build and test: `pnpm --filter @theia-shell/theia-secret-vault build` and
 `pnpm --filter @theia-shell/theia-secret-vault test` (19 unit tests).

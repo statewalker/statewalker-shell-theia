@@ -2,6 +2,7 @@ import { MemFilesApi } from "@statewalker/webrun-files-mem";
 import { FrontendApplicationContribution } from "@theia/core/lib/browser/frontend-application-contribution";
 import { CommandContribution } from "@theia/core/lib/common/command";
 import { KeyStoreService } from "@theia/core/lib/common/key-store";
+import { MenuContribution } from "@theia/core/lib/common/menu";
 import { ContainerModule, type interfaces } from "@theia/core/shared/inversify";
 import { VaultKeyStore } from "../common/vault-key-store";
 import { VaultUi } from "./vault-contribution";
@@ -26,4 +27,5 @@ export default new ContainerModule((bind, _unbind, isBound, rebind) => {
   bind(VaultUi).toSelf().inSingletonScope();
   bind(FrontendApplicationContribution).toService(VaultUi);
   bind(CommandContribution).toService(VaultUi);
+  bind(MenuContribution).toService(VaultUi);
 });
