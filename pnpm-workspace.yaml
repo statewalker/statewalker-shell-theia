@@ -61,3 +61,18 @@ catalog:
   "tailwindcss": ^4.3.3
   "typescript": ^7.0.2
   "vitest": ^5.0.3
+
+# Security fixes for transitive dependencies whose parents pin a vulnerable version.
+# Remove an entry once its parent ships a release with the fixed version.
+overrides:
+  # @theia/monaco-editor-core pins dompurify 3.2.7
+  "dompurify@<3.4.16": ^3.4.16
+  # mocha (via @theia/cli) requires diff ^7.0.0 and serialize-javascript ^6.0.2
+  "diff@>=6.0.0 <8.0.3": ^8.0.3
+  "serialize-javascript@<7.0.5": ^7.0.5
+  # http-proxy-agent 4 requires @tootallnate/once 1
+  "@tootallnate/once@<2.0.1": ^2.0.1
+  # react-tooltip requires uuid ^7.0.3
+  "uuid@<11.1.1": ^11.1.1
+  # @tailwindcss/typography pins postcss-selector-parser 6.0.10
+  "postcss-selector-parser@<7.1.6": ^7.1.6
