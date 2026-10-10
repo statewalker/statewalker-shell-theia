@@ -1,0 +1,10 @@
+{
+  "name": "decompress",
+  "version": "4.2.1-statewalker.0",
+  "private": true,
+  "description": "CommonJS entry for @xhmikosr/decompress, substituted for decompress through a pnpm override",
+  "main": "index.cjs",
+  "dependencies": {
+    "@xhmikosr/decompress": "^11.1.4"
+  }
+}

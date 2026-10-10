@@ -65,6 +65,10 @@ catalog:
 # Security fixes for transitive dependencies whose parents pin a vulnerable version.
 # Remove an entry once its parent ships a release with the fixed version.
 overrides:
+  # decompress has no fixed release (path traversal through symlinks and links; used by
+  # @theia/cli and @theia/plugin-ext). tools/decompress gives the fixed fork,
+  # @xhmikosr/decompress, the CommonJS entry those callers require.
+  decompress: file:./tools/decompress
   # @theia/monaco-editor-core pins dompurify 3.2.7
   "dompurify@<3.4.16": ^3.4.16
   # mocha (via @theia/cli) requires diff ^7.0.0 and serialize-javascript ^6.0.2
