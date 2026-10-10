@@ -38,7 +38,8 @@ packages/theia-httpeers       this browser as an httpeers mesh member
 packages/theia-httpeers-proxy outside HTTP origins exposed to the mesh
 packages/theia-llm-chat       a chat with the mesh's LLM or any OpenAI-compatible endpoint
 protos/p1…p7                  one prototype app per question; each README states the question and the answer
-tools/                        a static file server, the shared Playwright config, test fixtures
+tools/                        a static file server, the shared Playwright config, test fixtures,
+                              the decompress replacement (tools/decompress)
 docs/specs, docs/plans        design documents
 ```
 
@@ -128,6 +129,19 @@ Each prototype under `protos/` is a small app with its own e2e tests:
 | [P5](protos/p5-contributions) | Commands, keybindings, menus and views work with the standard APIs. |
 | [P6](protos/p6-vscode-extension) | Static VS Code web extensions run once `activationEvents` are explicit, and a small `HostedPluginServer` subclass deploys plugins at runtime. `@theia/plugin-ext` roughly doubles the frontend modules, and the app does not include it. |
 | [P7](protos/p7-embedpdf) | EmbedPDF runs inside Theia's bundle with no network access: PDFium's wasm is embedded as a data URL. |
+
+### `decompress` is replaced by its maintained fork
+
+`@theia/cli` (downloading plugins) and `@theia/plugin-ext` (deploying them) extract
+archives with `decompress`, whose last release lets a crafted archive write outside
+the target directory through symlink and hardlink entries. The fixed code exists only
+in the fork `@xhmikosr/decompress`, which is ESM-only, while both callers do
+`require("decompress")(...)` and would get an uncallable module namespace. The
+`decompress` override in `pnpm-workspace.yaml` therefore installs `tools/decompress`: a
+CommonJS function with the same signature that loads the fork.
+`tools/decompress/index.test.mjs`, run by `pnpm test`, extracts a regular archive and
+checks that an archive writing through an outside symlink is refused. If the override
+is dropped, that test fails with `Missing expected rejection`.
 
 ## What will surprise you
 
