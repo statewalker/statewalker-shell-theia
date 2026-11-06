@@ -40,7 +40,6 @@ packages/theia-llm-chat       a chat with the mesh's LLM or any OpenAI-compatibl
 protos/p1…p7                  one prototype app per question; each README states the question and the answer
 tools/                        a static file server, the shared Playwright config, test fixtures,
                               the decompress replacement (tools/decompress)
-docs/specs, docs/plans        design documents
 ```
 
 | Package | What it is |
