@@ -7,6 +7,7 @@ import {
   openFolderList,
   openMain,
   readFile,
+  regularProfileTest,
   runFromPalette,
   start,
   submitMountForm,
@@ -128,30 +129,34 @@ test("an OPFS mount and its files survive a reload", async ({ page }) => {
   expect(await readFile(page, "/drafts/idea.md")).toBe("# idea");
 });
 
-test("a local folder mounts through the picker and reconnects after a reload", async ({ page }) => {
-  // Playwright cannot drive the native picker: hand out an OPFS directory instead.
-  await page.addInitScript(() => {
-    (
-      window as unknown as { showDirectoryPicker: () => Promise<FileSystemDirectoryHandle> }
-    ).showDirectoryPicker = async () =>
-      (await navigator.storage.getDirectory()).getDirectoryHandle("picked", { create: true });
-  });
-  await start(page, "", { password: "test-password" });
-  // The folder is picked first; the form then offers its name.
-  await openFolderList(page);
-  await folderRow(page, "New Folder on this Computer…").click();
-  const dialog = page.locator(".mount-form-dialog");
-  await expect(dialog.locator(".mount-form-name")).toHaveValue("picked");
-  await expect(dialog.locator(".mount-form-key")).toHaveValue("picked");
-  await fillMountForm(page, { name: "Local Computer" });
-  await submitMountForm(page);
-  await expect(explorer(page).getByText("Local Computer", { exact: true })).toBeVisible();
-  await waitForSettings(page, '"local-computer"');
-  await page.reload();
-  await unlockVault(page, "test-password");
-  await openMain(page);
-  await expect(explorer(page).getByText(/^Local Computer/)).toBeVisible();
-});
+// A regular profile: Chromium crashes reading the stored OPFS handle in an off-the-record one.
+regularProfileTest(
+  "a local folder mounts through the picker and reconnects after a reload",
+  async ({ page }) => {
+    // Playwright cannot drive the native picker: hand out an OPFS directory instead.
+    await page.addInitScript(() => {
+      (
+        window as unknown as { showDirectoryPicker: () => Promise<FileSystemDirectoryHandle> }
+      ).showDirectoryPicker = async () =>
+        (await navigator.storage.getDirectory()).getDirectoryHandle("picked", { create: true });
+    });
+    await start(page, "", { password: "test-password" });
+    // The folder is picked first; the form then offers its name.
+    await openFolderList(page);
+    await folderRow(page, "New Folder on this Computer…").click();
+    const dialog = page.locator(".mount-form-dialog");
+    await expect(dialog.locator(".mount-form-name")).toHaveValue("picked");
+    await expect(dialog.locator(".mount-form-key")).toHaveValue("picked");
+    await fillMountForm(page, { name: "Local Computer" });
+    await submitMountForm(page);
+    await expect(explorer(page).getByText("Local Computer", { exact: true })).toBeVisible();
+    await waitForSettings(page, '"local-computer"');
+    await page.reload();
+    await unlockVault(page, "test-password");
+    await openMain(page);
+    await expect(explorer(page).getByText(/^Local Computer/)).toBeVisible();
+  },
+);
 
 async function writeSettings(page: import("@playwright/test").Page, json: string) {
   await runFromPalette(page, "Preferences: Open Settings (JSON)");

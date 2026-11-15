@@ -1,5 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { explorer, openMain, runFromPalette, start, unlockVault, waitForSettings } from "./helpers";
+import {
+  explorer,
+  openMain,
+  regularProfileTest,
+  runFromPalette,
+  start,
+  unlockVault,
+  waitForSettings,
+} from "./helpers";
 
 test("the first OPFS run creates the vault; the next asks for the password", async ({ page }) => {
   await start(page, "", { password: "first-password" });
@@ -46,31 +54,35 @@ test("settings.json lives in the main storage's .shell, not in the file tree", a
   await waitForSettings(page, "**/*.tmp");
 });
 
-test("a local-folder main needs a click after a reload; the fallback opens browser storage", async ({
-  page,
-}) => {
-  await page.addInitScript(() => {
-    (
-      window as unknown as { showDirectoryPicker: () => Promise<FileSystemDirectoryHandle> }
-    ).showDirectoryPicker = async () =>
-      (await navigator.storage.getDirectory()).getDirectoryHandle("home", { create: true });
-  });
-  await start(page, "", { password: "pw" });
-  await runFromPalette(page, "Files: Choose Main Storage…");
-  await page
-    .locator(".quick-input-list .monaco-list-row", { hasText: "A Folder on this Computer" })
-    .click();
-  await page
-    .locator(".quick-input-list .monaco-list-row", { hasText: "Copy my current settings" })
-    .click();
-  await page.waitForEvent("load");
-  // OPFS handles report "granted", so no gate: the app opens straight on the folder "home",
-  // with the copied settings and vault (same password) and the demo files seeded into it.
-  await expect(page.locator(".boot-gate")).toHaveCount(0);
-  await unlockVault(page, "pw");
-  await expect(explorer(page).getByText("home", { exact: true })).toBeVisible();
-  await expect(explorer(page).getByText("Browser Storage", { exact: true })).toHaveCount(0);
-});
+// A regular profile: Chromium crashes reading the stored OPFS handle in an off-the-record one.
+regularProfileTest(
+  "a local-folder main needs a click after a reload; the fallback opens browser storage",
+  async ({ page }) => {
+    await page.addInitScript(() => {
+      (
+        window as unknown as { showDirectoryPicker: () => Promise<FileSystemDirectoryHandle> }
+      ).showDirectoryPicker = async () =>
+        (await navigator.storage.getDirectory()).getDirectoryHandle("home", { create: true });
+    });
+    await start(page, "", { password: "pw" });
+    await runFromPalette(page, "Files: Choose Main Storage…");
+    await page
+      .locator(".quick-input-list .monaco-list-row", { hasText: "A Folder on this Computer" })
+      .click();
+    // Wait for the reload the choice triggers, registered before the click that starts it.
+    const reloaded = page.waitForEvent("load");
+    await page
+      .locator(".quick-input-list .monaco-list-row", { hasText: "Copy my current settings" })
+      .click();
+    await reloaded;
+    // OPFS handles report "granted", so no gate: the app opens straight on the folder "home",
+    // with the copied settings and vault (same password) and the demo files seeded into it.
+    await expect(page.locator(".boot-gate")).toHaveCount(0);
+    await unlockVault(page, "pw");
+    await expect(explorer(page).getByText("home", { exact: true })).toBeVisible();
+    await expect(explorer(page).getByText("Browser Storage", { exact: true })).toHaveCount(0);
+  },
+);
 
 test("the boot gate: a denied click stays, the fallback resolves", async ({ page }) => {
   await page.goto("/?storage=memory");
