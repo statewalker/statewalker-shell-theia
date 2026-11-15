@@ -1,4 +1,25 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
+
+/**
+ * `test` with each test's pages in a regular, on-disk browser profile instead of
+ * Playwright's default off-the-record context. Chromium 153 (Playwright 1.63)
+ * kills the whole browser (SIGTRAP) when an off-the-record context reads a
+ * FileSystemHandle from the origin private file system back from IndexedDB; a
+ * regular profile does not. Tests that hand the app an OPFS folder as the
+ * "picked" local folder, which the app stores in IndexedDB, use this.
+ */
+export const regularProfileTest = test.extend({
+  context: async ({ playwright, launchOptions, contextOptions, baseURL, viewport }, use, info) => {
+    const context = await playwright.chromium.launchPersistentContext(info.outputPath("profile"), {
+      ...launchOptions,
+      ...contextOptions,
+      baseURL,
+      viewport,
+    });
+    await use(context);
+    await context.close();
+  },
+});
 
 type Files = {
   read(path: string): AsyncIterable<Uint8Array>;

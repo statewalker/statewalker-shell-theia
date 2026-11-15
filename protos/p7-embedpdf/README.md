@@ -19,6 +19,11 @@ no binary fixture is checked in.
 The bytes come from Theia's `FileService`, so they are read from the
 `FilesApi`, and reach the viewer as a `blob:` URL.
 
+The viewer's layout is Tailwind utility classes that it ships no CSS for, so
+P7 includes the app's stylesheet, [`@theia-shell/app-style`](../../app/style).
+Without it the viewer's document area is about 20 px tall and EmbedPDF renders
+no page.
+
 ## Costs
 
 - `bundle.js` grows from 24 MB to 37.5 MB in development mode: the snippet

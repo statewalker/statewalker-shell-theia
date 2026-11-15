@@ -174,6 +174,11 @@ is dropped, that test fails with `Missing expected rejection`.
   their `lib`, so build first.
 - **The e2e tests use port 3100 by default.** Set `E2E_PORT` to run suites
   from two checkouts side by side.
+- **Tests that store a picked folder run in a regular browser profile.**
+  Chromium 153 (Playwright 1.63) crashes when an off-the-record context, which
+  every Playwright test gets by default, reads an OPFS handle back from
+  IndexedDB. The tests that hand the app an OPFS folder as the picked folder
+  use `regularProfileTest` from `app/tests/helpers.ts` instead of `test`.
 
 ## Reference
 
