@@ -37,20 +37,20 @@ catalogs:
       specifier: ^0.1.5
       version: 0.1.6
     '@statewalker/webrun-files':
-      specifier: ^0.10.0
-      version: 0.10.5
+      specifier: ^0.12.0
+      version: 0.12.0
     '@statewalker/webrun-files-browser':
-      specifier: ^0.10.0
-      version: 0.10.4
+      specifier: ^0.12.0
+      version: 0.12.0
     '@statewalker/webrun-files-composite':
-      specifier: ^0.10.0
-      version: 0.10.5
+      specifier: ^0.12.0
+      version: 0.12.0
     '@statewalker/webrun-files-mem':
-      specifier: ^0.10.0
-      version: 0.10.5
+      specifier: ^0.12.0
+      version: 0.12.0
     '@statewalker/webrun-files-s3':
-      specifier: ^0.10.0
-      version: 0.10.5
+      specifier: ^0.12.0
+      version: 0.12.0
     '@statewalker/webrun-http-browser':
       specifier: ^0.6.0
       version: 0.6.5
@@ -263,10 +263,10 @@ importers:
     dependencies:
       '@statewalker/webrun-files':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@statewalker/webrun-files-mem':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@theia-shell/theia-files-api':
         specifier: workspace:^
         version: link:../../packages/theia-files-api
@@ -321,10 +321,10 @@ importers:
     dependencies:
       '@statewalker/webrun-files':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@statewalker/webrun-files-mem':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@theia/core':
         specifier: 'catalog:'
         version: 1.76.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -342,16 +342,16 @@ importers:
     dependencies:
       '@statewalker/webrun-files':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@statewalker/webrun-files-browser':
         specifier: 'catalog:'
-        version: 0.10.4
+        version: 0.12.0
       '@statewalker/webrun-files-composite':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@statewalker/webrun-files-mem':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@theia-shell/theia-files-api':
         specifier: workspace:^
         version: link:../theia-files-api
@@ -384,10 +384,10 @@ importers:
         version: 3.1146.0
       '@statewalker/webrun-files':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@statewalker/webrun-files-s3':
         specifier: 'catalog:'
-        version: 0.10.5(@aws-sdk/client-s3@3.1146.0)
+        version: 0.12.0(@aws-sdk/client-s3@3.1146.0)
       '@theia-shell/theia-files-mounts':
         specifier: workspace:^
         version: link:../theia-files-mounts
@@ -505,10 +505,10 @@ importers:
     dependencies:
       '@statewalker/webrun-files':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@statewalker/webrun-files-mem':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@theia/core':
         specifier: 'catalog:'
         version: 1.76.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -610,7 +610,7 @@ importers:
     dependencies:
       '@statewalker/webrun-files-mem':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@theia-shell/theia-files-api':
         specifier: workspace:^
         version: link:../../../packages/theia-files-api
@@ -809,7 +809,7 @@ importers:
     dependencies:
       '@statewalker/webrun-files-mem':
         specifier: 'catalog:'
-        version: 0.10.5
+        version: 0.12.0
       '@theia-shell/theia-files-api':
         specifier: workspace:^
         version: link:../../../packages/theia-files-api
@@ -2420,22 +2420,22 @@ packages:
   '@statewalker/webrun-biscuit@0.2.3':
     resolution: {integrity: sha512-OgdQqAzzmDI2OQd8Mt1pWlEkAbshIbql0lbRitBqCVAZG0zuGtAS+K2qSoTEczdDGWUrAH+hm/cD9UdoDOXfJA==}
 
-  '@statewalker/webrun-files-browser@0.10.4':
-    resolution: {integrity: sha512-pDJMi8hH7loBb9rGxRaSib+gC4tEEWIgOvxAeNI54yyKyX5Z/G4oxUB99EkgcpGjmPfp76EX0a8Tkxju+Uegtw==}
+  '@statewalker/webrun-files-browser@0.12.0':
+    resolution: {integrity: sha512-HZhkQAHM3qGE77VlKvRdFxA5xHx4Do+4gOTF7Jm0omi6OHDNyUYpDKEmSKXweWFtMtmpqHtuP2r9qjW6w1PAbg==}
 
-  '@statewalker/webrun-files-composite@0.10.5':
-    resolution: {integrity: sha512-AjsMuHFRkNQJkQHEZh6saackR3W45A+Cd3fv8ojOIQNFxPuZETpoPLE4vvZNEPANoXHT/qp6yOI4ppw3q/xiaA==}
+  '@statewalker/webrun-files-composite@0.12.0':
+    resolution: {integrity: sha512-scqOp+4wilxgJvVGB+e5aAMATmSkMS6U38nIf9qavTwWW4+wPlWvhlw7HjwAoZf6fyZzFdeBjxiK05pdeDvLVQ==}
 
-  '@statewalker/webrun-files-mem@0.10.5':
-    resolution: {integrity: sha512-wqG60HcJHexyC/hClsHoSg+fRCfdYJ52/2R0PXkrMRaGmvwEUjhlQerTxYAHNSrvJwt61RIAsEWVFYRK980hfg==}
+  '@statewalker/webrun-files-mem@0.12.0':
+    resolution: {integrity: sha512-q8UZAUs3YIvJDPkYKHFvOhBTas0IKP41SJKDVQwxJbmcGrMyH2AbNRltX086VfA6PhO5TXoQW/UQNAEhUOGGUA==}
 
-  '@statewalker/webrun-files-s3@0.10.5':
-    resolution: {integrity: sha512-mjJy1YtWG6B3E+HZ7B/AZ4RrKM4G1WilBUD+3jpM6Nqw5zHmd9vHtX1P5C0O87zZNtNzDolnMSHqDYcJ4e4nvw==}
+  '@statewalker/webrun-files-s3@0.12.0':
+    resolution: {integrity: sha512-gjPYYADPB0WTtpB96b7L2lW+nC/Amu6Ox5KZQkihi2esdFQg9DaT+MIH2b5ImifbKc5A+XpEcWcMWW4aO9InmA==}
     peerDependencies:
       '@aws-sdk/client-s3': ^3.1032.0
 
-  '@statewalker/webrun-files@0.10.5':
-    resolution: {integrity: sha512-zHNomZV6PLbSBSUxWBLiYrPdNI5gTu+j+7B6kBFDdIgaFEVPeh0kAiJcG1pU+wXe695N4ir+XybkYHcaZ9jcWA==}
+  '@statewalker/webrun-files@0.12.0':
+    resolution: {integrity: sha512-8Ygw0JjouDAJ2nNXx8plZkZQ/Pesfdmdtrsyi97sArvjAmzyZ4xZ2e3eyqXEt4MUlc6oG4Q7bVnOvzzQpVWMaA==}
 
   '@statewalker/webrun-http-browser@0.6.5':
     resolution: {integrity: sha512-ar8u2XMBuUbMM+iet+sh3dw7Qru4W8VXv/HjLGbFlGWzMWAU5X8boPD6lKkAG6Qedx5yY1XCOYnspHe6HmF8gg==}
@@ -8614,24 +8614,24 @@ snapshots:
       '@noble/curves': 2.4.0
       '@noble/hashes': 2.4.0
 
-  '@statewalker/webrun-files-browser@0.10.4':
+  '@statewalker/webrun-files-browser@0.12.0':
     dependencies:
-      '@statewalker/webrun-files': 0.10.5
+      '@statewalker/webrun-files': 0.12.0
 
-  '@statewalker/webrun-files-composite@0.10.5':
+  '@statewalker/webrun-files-composite@0.12.0':
     dependencies:
-      '@statewalker/webrun-files': 0.10.5
+      '@statewalker/webrun-files': 0.12.0
 
-  '@statewalker/webrun-files-mem@0.10.5':
+  '@statewalker/webrun-files-mem@0.12.0':
     dependencies:
-      '@statewalker/webrun-files': 0.10.5
+      '@statewalker/webrun-files': 0.12.0
 
-  '@statewalker/webrun-files-s3@0.10.5(@aws-sdk/client-s3@3.1146.0)':
+  '@statewalker/webrun-files-s3@0.12.0(@aws-sdk/client-s3@3.1146.0)':
     dependencies:
       '@aws-sdk/client-s3': 3.1146.0
-      '@statewalker/webrun-files': 0.10.5
+      '@statewalker/webrun-files': 0.12.0
 
-  '@statewalker/webrun-files@0.10.5': {}
+  '@statewalker/webrun-files@0.12.0': {}
 
   '@statewalker/webrun-http-browser@0.6.5':
     dependencies:

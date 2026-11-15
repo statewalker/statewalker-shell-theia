@@ -24,11 +24,11 @@ catalog:
   "@statewalker/httpeers-core": "^0.1.1"
   "@statewalker/httpeers-join": "^0.1.1"
   "@statewalker/httpeers-member": "^0.1.5"
-  "@statewalker/webrun-files": ^0.10.0
-  "@statewalker/webrun-files-browser": ^0.10.0
-  "@statewalker/webrun-files-composite": ^0.10.0
-  "@statewalker/webrun-files-mem": ^0.10.0
-  "@statewalker/webrun-files-s3": ^0.10.0
+  "@statewalker/webrun-files": ^0.12.0
+  "@statewalker/webrun-files-browser": ^0.12.0
+  "@statewalker/webrun-files-composite": ^0.12.0
+  "@statewalker/webrun-files-mem": ^0.12.0
+  "@statewalker/webrun-files-s3": ^0.12.0
   "@statewalker/webrun-http-browser": "^0.6.0"
   "@statewalker/webrun-http-proxy": "^0.2.1"
   "@tailwindcss/cli": ^4.3.3
