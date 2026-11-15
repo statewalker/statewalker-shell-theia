@@ -23,11 +23,12 @@
     }
   },
   "scripts": {
-    "build": "pnpm --filter @theia-shell/theia-files-api --filter @theia-shell/theia-pdf-viewer build && theia build --mode development",
+    "build": "pnpm --filter @theia-shell/theia-files-api --filter @theia-shell/theia-pdf-viewer --filter @theia-shell/app-style build && theia build --mode development",
     "test:e2e": "playwright test",
     "typecheck:tests": "tsc -p tsconfig.tests.json"
   },
   "dependencies": {
+    "@theia-shell/app-style": "workspace:^",
     "@theia-shell/p7-extension": "workspace:^",
     "@theia-shell/theia-files-api": "workspace:^",
     "@theia-shell/theia-pdf-viewer": "workspace:^",

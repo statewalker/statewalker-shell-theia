@@ -764,6 +764,9 @@ importers:
 
   protos/p7-embedpdf:
     dependencies:
+      '@theia-shell/app-style':
+        specifier: workspace:^
+        version: link:../../app/style
       '@theia-shell/p7-extension':
         specifier: workspace:^
         version: link:extension
