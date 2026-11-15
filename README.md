@@ -184,6 +184,7 @@ is dropped, that test fails with `Missing expected rejection`.
 | `pnpm build` | `pnpm -r run build` |
 | `pnpm test` | `pnpm -r run test` (vitest) |
 | `pnpm test:e2e` | `pnpm -r run test:e2e` (Playwright) |
+| `pnpm test:nightly` | Every package's `test:e2e`, one at a time, each to the end even when one fails |
 | `pnpm typecheck` | `pnpm -r run typecheck`: each package's sources (`tsc --noEmit`) |
 | `pnpm typecheck:tests` | `pnpm -r run typecheck:tests`: the unit tests and the Playwright specs |
 | `pnpm lint` / `pnpm lint:check` | Biome check, with or without writing fixes |
@@ -201,7 +202,10 @@ is dropped, that test fails with `Missing expected rejection`.
 statewalker/statewalker-ci's shared workflow with the required `app` baseline
 (a gitleaks secret scan, the release-path check, a frozen install, the
 required-scripts check, `lint:check`, `format:check`, `build`, `typecheck`,
-`typecheck:tests` and `test`). The e2e tests are not part of it.
+`typecheck:tests` and `test`). The e2e tests are not part of it:
+`.github/workflows/nightly.yml` runs them every night (`pnpm test:nightly`, after
+building the httpeers relay and hub for the mesh suite) and on demand, and a
+failure opens one `bug` + `ci-baseline` issue here.
 
 ### Releases
 

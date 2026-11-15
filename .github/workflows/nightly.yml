@@ -1,0 +1,31 @@
+name: Nightly
+
+# The end-to-end suites the CI of a pull request does not run (statewalker/statewalker-ci's
+# nightly.yml): root `test:nightly` runs the Playwright `test:e2e` suites of @theia-shell/app and
+# of the prototypes, one at a time and each to the end even when one fails, against their static
+# builds (the shared workflow builds first). A failure opens one `bug` + `ci-baseline` issue here;
+# later failures comment on it while it is open.
+#
+# The app's mesh suite (app/tests/mesh.spec.ts) starts a relay and a hub daemon from a built
+# httpeers checkout next to this repository (tools/mesh-stack.mjs, `../httpeers`), so the setup
+# clones and builds the two httpeers apps it needs. The S3 suites start RustFS in Docker
+# themselves (tools/rustfs.mjs); the runner has Docker.
+
+on:
+  schedule:
+    - cron: "41 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  nightly:
+    uses: statewalker/statewalker-ci/.github/workflows/nightly.yml@main
+    with:
+      setup: |
+        pnpm exec playwright install --with-deps chromium
+        git clone --depth 1 https://github.com/statewalker/httpeers.git ../httpeers
+        pnpm --dir ../httpeers install --frozen-lockfile
+        pnpm --dir ../httpeers --filter "@statewalker/httpeers-relay..." --filter "@statewalker/httpeers-hub-daemon..." run build

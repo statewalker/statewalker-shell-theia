@@ -16,6 +16,7 @@
     "build": "pnpm -r run build",
     "test": "pnpm -r run test && node --test tools/decompress/index.test.mjs",
     "test:e2e": "pnpm -r run test:e2e",
+    "test:nightly": "pnpm -r --no-bail --workspace-concurrency=1 run test:e2e",
     "lint": "biome check --write .",
     "lint:check": "biome check .",
     "format": "biome format --write .",
