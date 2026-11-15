@@ -1,0 +1,9 @@
+{
+  // Typechecks the Playwright suite only; the app itself is built by `theia build`.
+  "extends": "../../tsconfig.theia.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["tests"]
+}

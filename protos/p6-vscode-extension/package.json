@@ -24,7 +24,8 @@
   },
   "scripts": {
     "build": "pnpm --filter @theia-shell/p6-extension build && theia build --mode development && node scripts/prepare-late-plugins.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "typecheck:tests": "tsc -p tsconfig.tests.json"
   },
   "dependencies": {
     "@theia-shell/p3-extension": "workspace:^",

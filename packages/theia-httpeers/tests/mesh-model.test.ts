@@ -73,7 +73,7 @@ describe("statusBarText", () => {
     ).toBe("Mesh: dialing hub");
     expect(
       statusBarText({
-        phase: { kind: "live", joinedBy: "resume", note: null },
+        phase: { kind: "live", joinedBy: "resumed", note: null },
         hubLink: "direct",
       }),
     ).toBe("Mesh: live (direct)");

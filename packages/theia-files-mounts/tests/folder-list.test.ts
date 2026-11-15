@@ -1,7 +1,7 @@
 import { MemFilesApi } from "@statewalker/webrun-files-mem";
 import { describe, expect, it } from "vitest";
 import { buildFolderList } from "../src/common/folder-list";
-import type { MountType } from "../src/common/mount-types";
+import type { MountConfig, MountType } from "../src/common/mount-types";
 
 const type = (id: string, label: string, available = true, newLabel?: string): MountType => ({
   id,
@@ -19,7 +19,7 @@ const types = new Map([
 
 describe("buildFolderList", () => {
   it("lists remembered folders, unreferenced browser-storage folders, then new ones", () => {
-    const entries = [
+    const entries: MountConfig[] = [
       { key: "temp", name: "Temporary", type: "memory", config: {} },
       {
         key: "drafts",

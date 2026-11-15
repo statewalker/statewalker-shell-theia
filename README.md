@@ -167,8 +167,11 @@ is dropped, that test fails with `Missing expected rejection`.
 - **The ServiceWorker must be at `/sw.js`.** The app's build copies it there.
   The app must be served from the origin root, over https or from localhost,
   or the mesh edge cannot register.
-- **`pnpm typecheck` checks nothing.** No package defines a `typecheck`
-  script; types are checked by each package's `tsc` build.
+- **Tests are typechecked apart from the sources.** Each package's `tsconfig.json`
+  builds `src` only; its `tsconfig.tests.json` (run by `typecheck:tests`) adds
+  `tests`. The app and the prototypes have only a `tsconfig.tests.json`, for
+  their Playwright specs. Both typechecks resolve the other packages through
+  their `lib`, so build first.
 - **The e2e tests use port 3100 by default.** Set `E2E_PORT` to run suites
   from two checkouts side by side.
 
@@ -181,6 +184,8 @@ is dropped, that test fails with `Missing expected rejection`.
 | `pnpm build` | `pnpm -r run build` |
 | `pnpm test` | `pnpm -r run test` (vitest) |
 | `pnpm test:e2e` | `pnpm -r run test:e2e` (Playwright) |
+| `pnpm typecheck` | `pnpm -r run typecheck`: each package's sources (`tsc --noEmit`) |
+| `pnpm typecheck:tests` | `pnpm -r run typecheck:tests`: the unit tests and the Playwright specs |
 | `pnpm lint` / `pnpm lint:check` | Biome check, with or without writing fixes |
 | `pnpm format` / `pnpm format:check` | Biome format, with or without writing |
 | `pnpm --filter <name> build` / `test` | One package |
@@ -192,9 +197,11 @@ is dropped, that test fails with `Missing expected rejection`.
 
 ### Continuous integration
 
-`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests: a
-frozen install, `lint:check`, `format:check`, `build`, `typecheck` and `test`.
-The e2e tests are not part of it.
+`.github/workflows/ci.yml` runs on pushes to `main` and on pull requests:
+statewalker/statewalker-ci's shared workflow with the required `app` baseline
+(a gitleaks secret scan, the release-path check, a frozen install, the
+required-scripts check, `lint:check`, `format:check`, `build`, `typecheck`,
+`typecheck:tests` and `test`). The e2e tests are not part of it.
 
 ### Releases
 
