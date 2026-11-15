@@ -20,7 +20,9 @@
   ],
   "scripts": {
     "build": "tailwindcss -i src/app.css -o lib/app.css && tsc -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "typecheck:tests": "tsc -p tsconfig.tests.json"
   },
   "dependencies": {
     "@theia/core": "catalog:"

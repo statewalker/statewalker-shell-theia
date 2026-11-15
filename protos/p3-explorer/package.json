@@ -24,7 +24,8 @@
   },
   "scripts": {
     "build": "theia build --mode development",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "typecheck:tests": "tsc -p tsconfig.tests.json"
   },
   "dependencies": {
     "@theia-shell/p3-extension": "workspace:^",

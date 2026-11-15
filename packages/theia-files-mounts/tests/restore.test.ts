@@ -18,7 +18,10 @@ const editor = (uri: string) => ({
   factoryId: "code-editor-opener",
   options: { kind: "navigatable", uri, counter: 0 },
 });
-const desc = (constructionOptions: object) => ({ constructionOptions, innerWidgetState: "{}" });
+const desc = (constructionOptions: { factoryId: string; options?: unknown }) => ({
+  constructionOptions,
+  innerWidgetState: "{}",
+});
 
 describe("layoutAreas", () => {
   it("finds each widget description's shell area, however deep the dock layout nests it", () => {
