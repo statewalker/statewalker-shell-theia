@@ -160,10 +160,10 @@ is dropped, that test fails with `Missing expected rejection`.
   (`tools/rustfs.mjs`). With no Docker they are skipped, not failed.
 - **`app/style`'s tests read the compiled CSS.** Run its `build` first, or they
   fail with `ENOENT` on `lib/app.css`.
-- **The app's bundle rewrites `import.meta.url` in `@statewalker/webrun-http-browser`.**
-  Theia bundles the frontend as a classic script, where `import.meta` is an
-  empty object. Without the rewrite in `app/esbuild.mjs` the mesh edge throws
-  `Invalid URL` and never starts.
+- **The page and `/sw.js` come from one `@statewalker/webrun-http-browser`.**
+  `packages/theia-httpeers/scripts/copy-sw.mjs` copies the worker from the copy
+  `httpeers-member` resolves, the one the page bundles. Keep the lockfile at one
+  copy of it: a worker from another line does not understand the page.
 - **The ServiceWorker must be at `/sw.js`.** The app's build copies it there.
   The app must be served from the origin root, over https or from localhost,
   or the mesh edge cannot register.
