@@ -57,8 +57,7 @@ their browser-only modules, which walk the workspace through Theia's
 `FileService`, and so through the `FilesApi`.
 
 `app/esbuild.mjs` adjusts Theia's bundle: it copies the mesh ServiceWorker to
-`lib/frontend/sw.js` and rewrites `import.meta.url` in
-`@statewalker/webrun-http-browser` (see below).
+`lib/frontend/sw.js` (see below).
 
 ## How to run it
 
@@ -186,8 +185,9 @@ must be added there too, or its classes have no CSS.
   applies it too. So binary types are not excluded there.
 - **The mesh edge needs the origin root.** The ServiceWorker is served
   un-hashed at `/sw.js`. Serve the app from the origin root, over https or from
-  localhost. Without the `import.meta.url` rewrite in `esbuild.mjs`, the edge
-  throws `Invalid URL` and never starts.
+  localhost. The worker is `webrun-http-browser`'s own `sw-worker.js`, copied
+  from the copy the page bundles: a page and a worker from different lines do
+  not understand each other, and the edge refuses to start.
 
 ## Reference
 
