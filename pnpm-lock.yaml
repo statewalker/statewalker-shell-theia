@@ -5262,8 +5262,8 @@ packages:
   node-pty@1.2.0-beta.12:
     resolution: {integrity: sha512-uExTCG/4VmSJa4+TjxFwPXv8BfacmfFEBL6JpxCMDghcwqzvD0yTcGmZ1fKOK6HY33tp0CelLblqTECJizc+Yw==}
 
-  node-releases@2.0.65:
-    resolution: {integrity: sha512-PfvofsGQ+MiOQIPkX9fU8ELUWmy5zL74CdQaph/ismKszfFkfwXaw0cGiwbwym2hT9k5+mdyl8O5WQ1MD8EHmA==}
+  node-releases@2.0.66:
+    resolution: {integrity: sha512-uSMWN9/XtWzxaE0d9ZNHe00Hda6028AXH3WRjTsK71neiPCSeL5nGSD9MXTQX/6Qx0k7Op1AyyinmIUw9fBzrg==}
     engines: {node: '>=18'}
 
   nopt@9.0.0:
@@ -10684,7 +10684,7 @@ snapshots:
       baseline-browser-mapping: 2.11.39
       caniuse-lite: 1.0.30001828
       electron-to-chromium: 1.5.494
-      node-releases: 2.0.65
+      node-releases: 2.0.66
       update-browserslist-db: 1.4.0(browserslist@4.29.6)
     optional: true
 
@@ -12748,7 +12748,7 @@ snapshots:
     dependencies:
       node-addon-api: 7.1.1
 
-  node-releases@2.0.65:
+  node-releases@2.0.66:
     optional: true
 
   nopt@9.0.0:
